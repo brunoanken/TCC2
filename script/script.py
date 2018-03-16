@@ -18,6 +18,8 @@ for line in proc.stdout:
     test.write(line)
 proc.wait
 
+# ler o arquivo criado linha a linha, fazer o parse de acordo com a formatação (por espaço(s) entre os dados) e aí sim
+# escrever/formatar direitinho
 
 #user = subprocess.check_output(['nfdump', '-r', 'nfcapd.201303012355', '-i', 'test.txt'])
 
