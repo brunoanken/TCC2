@@ -1,44 +1,36 @@
 import os
 import subprocess
 import sys
+import csv
 
 # TODO pensar na segurança dos arquivos criados
 # AFINAL DE CONTAS O SEU TCC É NA ÁREA DE SEGURANÇA, NÉ...
 
-os.chdir("/home/anken/Documents/TCC2/rede/data/01")
+# vai ao diretório em que estão localizados os arquivos nfcapd
+os.chdir("/home/anken/Documents/TCC2/dados_rede/data/01")
 
-
-test = open('test.txt', 'w')
-proc = subprocess.Popen(['nfdump', '-r', 'nfcapd.201303012355'],
+# realiza o comando de leitura do arquivo
+proc = subprocess.Popen(['nfdump', '-R', 'nfcapd.201303012355', '-o', 'extended'],
                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
 
 #ISSO DEU CERTO AHEUEAHAEUODHNSAOUDGWABIUYDPAGDFSAPIDUŚAGHDUIWGDPWAISA
-for line in proc.stdout:
-    sys.stdout.write(line)
-    test.write(line)
-proc.wait
+def readNfcapd():
+    #cria um arquivo 
+    test = open('test2.txt', 'w')
+    #escreve o resultado da leitura de proc em um .txt
+    for line in proc.stdout:
+        sys.stdout.write(line)
+        test.write(line)
 
+readNfcapd()
 
-#user = subprocess.check_output(['nfdump', '-r', 'nfcapd.201303012355', '-i', 'test.txt'])
+# ** -- **
+# CSV
 
-#print("resultado: ", user)
+# test = open('test2.txt', 'r')
+# out_csv = csv.writer(open('out_csv.csv', 'wb'))
 
-# text_file = open("Output.txt", "w")
-# text_file.write(str(user))
-# text_file.close()
+# file_string = test.read()
+# file_list = file_string.split(' ')
 
-#os.system("nfdump -r nfcapd.201303012355 -o csv > output.csv")
-#os.system("nfdump -R /home/anken/Documents/TCC2/dados_toledo/data/01 -o csv > output.csv")
-
-# print('\ntest')
-# print(test)
-# print('\ntest')
-
-# with open("Output.txt", "w") as text_file:
-#     print(test, file=text_file)
-
-
-#proc = subprocess.check_call(['nfdump',  '-r', 'nfcapd.201303012355'])
-#output = proc.stdout.read()
-# output = subprocess.Popen("nfdump", "-r", "nfcapd.201303012355")
-# print ("Output: ", output)
+# out_csv.writerows(test)
