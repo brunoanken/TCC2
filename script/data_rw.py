@@ -6,7 +6,7 @@ import sys
 diaInicio = 1
 
 #DEFINA O ÚLTIMO DIA A SER PROCESSADO (na realidade é o último dia + 1)
-diaTermino = 32
+diaTermino = 2
 
 #coloque o endereço do diretório onde se encontram os dados
 os.chdir("../dados_rede/data")
@@ -105,9 +105,11 @@ for dia in range(diaInicio, diaTermino):
     finalFileName = f'csv_data/{dia}.csv'
     output = open(finalFileName, 'w')
     all_lines = open(fileName, 'r')
-    output.write('horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes,bytes\n')
+    output.write('index,horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes,bytes\n')
+    indexGeral = 0
     for line in sorted(all_lines, key=get_key):
-        output.write(line)
+        output.write(f'{indexGeral},{line}')
+        indexGeral += 1
 
     output.close()
     all_lines.close()

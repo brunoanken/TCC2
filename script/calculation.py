@@ -3,7 +3,7 @@ import subprocess
 import sys
 import pandas as pd
 
-os.chdir("./../dados_rede/data/csv_data")
+os.chdir("../dados_rede/data/csv_data")
 
 # target_file = pd.read_csv('1.csv')
 # dictionary = target_file.
