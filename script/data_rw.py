@@ -5,11 +5,11 @@ import sys
 #DEFINA O DIA QUE VOCE DESEJA INICIAR O PROCESSAMENTO
 diaInicio = 1
 
-#DEFINA O ÚLTIMO DIA A SER PROCESSADO
-diaTermino = 31
+#DEFINA O ÚLTIMO DIA A SER PROCESSADO (na realidade é o último dia + 1)
+diaTermino = 32
 
 #coloque o endereço do diretório onde se encontram os dados
-os.chdir("/home/anken/Documents/TCC2/dados_rede/data")
+os.chdir("../dados_rede/data")
 
 def get_key(line):
         horario = line.split(",")[0]
@@ -18,7 +18,7 @@ def get_key(line):
         segundos = int(horario.split(':')[2])
         return horas*3600+minutos*60+segundos
 
-for dia in range(1, 32):
+for dia in range(diaInicio, diaTermino):
 
     fileName = f'{dia}.txt'
     file = open(fileName, 'w')
@@ -101,15 +101,17 @@ for dia in range(1, 32):
     file.close()
 
     #Ordenando o arquivo
-
-    finalFileName = f'final{dia}.txt'
+    cabecalho = ''
+    finalFileName = f'csv_data/{dia}.csv'
     output = open(finalFileName, 'w')
     all_lines = open(fileName, 'r')
+    output.write('horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes,bytes\n')
     for line in sorted(all_lines, key=get_key):
         output.write(line)
 
     output.close()
     all_lines.close()
 
-proc.wait
+    os.remove(fileName)
 
+proc.wait
