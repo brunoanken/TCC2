@@ -6,7 +6,7 @@ import sys
 diaInicio = 1
 
 #DEFINA O ÚLTIMO DIA A SER PROCESSADO (na realidade é o último dia + 1)
-diaTermino = 2
+diaTermino = 32
 
 #coloque o endereço do diretório onde se encontram os dados
 os.chdir("../dados_rede/data")
