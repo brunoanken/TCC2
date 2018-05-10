@@ -18,9 +18,9 @@ def readColumns(filePath, firstColumnName, secondColumnName):
 # cria um dicionário usando uma lista como chave e outra lista como valor
 def createDictionary(keyColumn, valueColumn):
     if(len(keyColumn) == len(valueColumn)):
-        dictionary = {}
-        for i in range(0, len(keyColumn)):
-            dictionary[keyColumn[i]] = valueColumn[i]
+        dictionary = dict(zip(keyColumn, valueColumn))
+        # for i in range(0, len(keyColumn)):
+        #     dictionary[keyColumn[i]] = valueColumn[i]
         return dictionary
     else:
         print('ERRO: listas com tamanhos diferentes')
@@ -35,13 +35,109 @@ def createHistogram(data):
             histogram[value] = 1
     return histogram
 
+# recebe um dicionário e o intervalo de tempo em minutos como parâmetros
+# vai mapear o dicionário, que deve conter o índice como chave e o horário como valor
+# cria uma lista com o índice do início de cada intervalo, iniciando-se o intervalo em 0
+# o intervalo será medido em minutos
+# desta maneira, será possível saber de qual índice a qual índice
+# corresponde a divisão no intervalo em minutos definido
+
+def minuteMapper(dictionary, interval):
+    firstKey = next(iter(dictionary))
+    # print(firstKey)
+
+    # globalHour = int(dictionary[firstKey][2])
+    globalMinute = int(dictionary[firstKey].split(':')[1])
+
+    # before = firstKey
+    # o primeiro valor do primeiro intervalo sempre será o primeiro item, de index 0
+    intervalIndexes = [0]
+    intervalCounter = 0
+    
+    for index in dictionary:
+        # print(f'{index} : {dictionary[index]}')
+        minute = int(dictionary[index].split(':')[1])
+
+        # print(f'minuto: {minute}, minuto global: {globalMinute}')
+
+
+        if(minute != globalMinute):
+            globalMinute += 1
+            intervalCounter += 1
+
+        if(globalMinute == 60):
+            globalMinute = 0
+
+        if(intervalCounter == interval):
+            intervalCounter = 0
+            intervalIndexes.append(index)
+
+    return intervalIndexes
+
+# dá slice na lista de acordo com os valores passados e retorna o resultado
+
+def sliceList(data, start, end):
+    return data[start:end]
+
+# calcula a probabilidade de ocorrência de cada item em um histograma
+# retorna o resultado em forma de dicionário
+
+def probability(histogram):
+    total = 0
+    for key in histogram:
+        total += histogram[key]
+    print(total)
+    for key in histogram:
+        histogram[key] /= total
+
+    return histogram
+
+# def probability(histogram, )
+
+key = readColumn('./tests/histogramTest.csv', 'index')
+value = readColumn('./tests/histogramTest.csv', 'ip_origem')
+
+vec = [0, 4, 6, 9]
+
+key = sliceList(key, 0, 4)
+value = sliceList(value, 0, len(value))
+
+di = createHistogram(value)
+prob = probability(di)
+
+print(prob)
+
+# print(sliceList(key, 0, len(key)))
+
+# dic = createDictionary(key, value)
+
+# result = minuteMapper(dic, 1)
+
+# print(result)
+
+# esperado: 0 4 6 9
+
+        
+        
+        
+
+        
+        
+    
+
+# key = readColumn('../dados_rede/data/csv_data/1.csv', 'ip_origem')
+# histogram = createHistogram(key)
+# for key, val in histogram.items():
+#     print(f'{key} : {val}')
+
+
 # TODO função que consegue mapear/segregar os valores de acordo com o tempo (em segundos ou minutos?)
 
 # print(createDictionary('../dados_rede/data/csv_data/1.csv', 'index', 'horario'))
 
 # createDictionary(readColumn('../dados_rede/data/csv_data/1.csv', 'index'), readColumn('../dados_rede/data/csv_data/1.csv', 'horario'))
 
-createHistogram(readColumn('../dados_rede/data/csv_data/1.csv', 'horario'))
+# createHistogram(readColumn('../dados_rede/data/csv_data/1.csv', 'horario'))
 # path = '../dados_rede/data/csv_data/'
 # file = '1.csv'
 
