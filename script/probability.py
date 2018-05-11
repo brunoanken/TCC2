@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import pandas as pd
+import math
 
 # lê a coluna passada como argumento e retorna seus valores em uma lista
 def readColumn(filePath, columnName):
@@ -33,33 +34,26 @@ def createHistogram(data):
             histogram[value] += 1
         else:
             histogram[value] = 1
+    # print('histograma: ', histogram)
     return histogram
 
 # recebe um dicionário e o intervalo de tempo em minutos como parâmetros
 # vai mapear o dicionário, que deve conter o índice como chave e o horário como valor
-# cria uma lista com o índice do início de cada intervalo, iniciando-se o intervalo em 0
+# cria uma lista com o índice do início de cada intervalo
 # o intervalo será medido em minutos
 # desta maneira, será possível saber de qual índice a qual índice
-# corresponde a divisão no intervalo em minutos definido
-
+# se aplica a divisão no intervalo em minutos definido
 def minuteMapper(dictionary, interval):
     firstKey = next(iter(dictionary))
-    # print(firstKey)
 
-    # globalHour = int(dictionary[firstKey][2])
     globalMinute = int(dictionary[firstKey].split(':')[1])
 
-    # before = firstKey
     # o primeiro valor do primeiro intervalo sempre será o primeiro item, de index 0
     intervalIndexes = [0]
     intervalCounter = 0
     
     for index in dictionary:
-        # print(f'{index} : {dictionary[index]}')
         minute = int(dictionary[index].split(':')[1])
-
-        # print(f'minuto: {minute}, minuto global: {globalMinute}')
-
 
         if(minute != globalMinute):
             globalMinute += 1
@@ -75,37 +69,98 @@ def minuteMapper(dictionary, interval):
     return intervalIndexes
 
 # dá slice na lista de acordo com os valores passados e retorna o resultado
-
 def sliceList(data, start, end):
     return data[start:end]
 
 # calcula a probabilidade de ocorrência de cada item em um histograma
 # retorna o resultado em forma de dicionário
-
 def probability(histogram):
     total = 0
     for key in histogram:
         total += histogram[key]
-    print(total)
     for key in histogram:
         histogram[key] /= total
 
     return histogram
 
-# def probability(histogram, )
 
-key = readColumn('./tests/histogramTest.csv', 'index')
-value = readColumn('./tests/histogramTest.csv', 'ip_origem')
+# calcula A FUCKING ENTROPIA DE SHANNON
+# A PORRA DA ENTROPIA DA INFORMAÇÃO
+# FINALMENTE CARALHO PORRA
+# recebe como parâmetro o dicionário com as probabilidades das chaves
 
-vec = [0, 4, 6, 9]
+def entroPy(data):
+    entropy = 0
+    for key in data:
+        entropy += - data[key] * math.log2(data[key])
+    
+    return entropy
 
-key = sliceList(key, 0, 4)
-value = sliceList(value, 0, len(value))
 
-di = createHistogram(value)
-prob = probability(di)
+for i in range(1, 2):
+    file = f'../dados_rede/data/csv_data/{i}.csv'
+    # file = './tests/histogramTest.csv'
+    
+    key = readColumn(file, 'index')
+    value = readColumn(file, 'horario')
 
-print(prob)
+    dic = createDictionary(key, value)
+
+    #mais um for, pra ir de acordo com os intervalos em minutos (1, 2, 3, 4, 5)
+    vec = minuteMapper(dic, 1)
+
+    #lista pra posterior escrita no csv
+    results = []
+    #cria a linha do csv
+    result = ''
+
+    #mais um for, pra percorrer todos as colunas em que a entropia deve ser calculada
+    entropyData = ['ip_origem', 'porta_origem', 'ip_destino', 'porta_destino']
+
+    for column in entropyData:
+
+        ip = readColumn(file, column)
+
+        count = 0
+        for i in vec:
+            if(i == vec[len(vec) - 1]):
+                # print('i: ', i)
+                data = createHistogram(sliceList(ip, vec[len(vec) - 1], len(ip)))
+                # print('intervalo:', vec[len(vec) - 1], len(ip))
+            else:
+                # print('intervalo:', i, vec[count + 1])
+                data = createHistogram(sliceList(ip, i, vec[count + 1]))
+
+            # di = createHistogram(data)
+            prob = probability(data)
+            count += 1
+
+            # print('probabilidade:', prob)
+
+            print(f'entropia {i}:', entroPy(prob))
+
+            results.append(entroPy(prob))
+
+    
+    for res in results:
+        result += f'{results},'
+
+    output = open('../dados_rede/data/entropy/1/1.csv', 'w')
+    output.write('ip_origem,porta_origem,ip_destino,porta_destino\n')
+    output.write(result)
+
+# entropy
+
+
+
+
+# key = sliceList(key, 0, 4)
+# value = sliceList(value, 0, len(value))
+
+# di = createHistogram(value)
+# prob = probability(di)
+
+# print(prob)
 
 # print(sliceList(key, 0, len(key)))
 
