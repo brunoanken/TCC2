@@ -96,58 +96,84 @@ def entroPy(data):
     
     return entropy
 
-
-for i in range(1, 2):
-    file = f'../dados_rede/data/csv_data/{i}.csv'
+# range(start,end) vai de start até end - 1
+#primeiro for para percorrer os arquivos de todos os dias
+for day in range(1,32):
+    file = f'../dados_rede/data/csv_data/{day}.csv'
     # file = './tests/histogramTest.csv'
-    
+
     key = readColumn(file, 'index')
     value = readColumn(file, 'horario')
 
     dic = createDictionary(key, value)
 
     #mais um for, pra ir de acordo com os intervalos em minutos (1, 2, 3, 4, 5)
-    vec = minuteMapper(dic, 1)
+    #vai ser o mesmo intervalo para todas as colunas
+    #mas o cálculo dos intervalos será feito uma coluna de cada vez
+    #e ao final os dados serão escritos
+    for minute in range(1, 6):
+        vec = minuteMapper(dic, 1)
 
-    #lista pra posterior escrita no csv
-    results = []
-    #cria a linha do csv
-    result = ''
+        #a lista de resultados de cada coluna vai ter o mesmo tamanho
+        #visto que o CSV é padronizado
 
-    #mais um for, pra percorrer todos as colunas em que a entropia deve ser calculada
-    entropyData = ['ip_origem', 'porta_origem', 'ip_destino', 'porta_destino']
+        #lista pra posterior escrita no csv
+        results_ip_origem = []
+        results_porta_origem = []
+        results_ip_destino = []
+        results_porta_destino = []
 
-    for column in entropyData:
+        #cria a linha do csv
+        result = ''
 
-        ip = readColumn(file, column)
+        #mais um for, pra percorrer todos as colunas em que a entropia deve ser calculada
+        entropyData = ['ip_origem', 'porta_origem', 'ip_destino', 'porta_destino']
 
-        count = 0
-        for i in vec:
-            if(i == vec[len(vec) - 1]):
-                # print('i: ', i)
-                data = createHistogram(sliceList(ip, vec[len(vec) - 1], len(ip)))
-                # print('intervalo:', vec[len(vec) - 1], len(ip))
-            else:
-                # print('intervalo:', i, vec[count + 1])
-                data = createHistogram(sliceList(ip, i, vec[count + 1]))
+        for column in entropyData:
 
-            # di = createHistogram(data)
-            prob = probability(data)
-            count += 1
+            data_column = readColumn(file, column)
 
-            # print('probabilidade:', prob)
+            count = 0
+            for i in vec:
+                if(i == vec[len(vec) - 1]):
+                    # print('i: ', i)
+                    data_histogram = createHistogram(sliceList(data_column, vec[len(vec) - 1], len(data_column)))
+                    # print('intervalo:', vec[len(vec) - 1], len(ip))
+                else:
+                    # print('intervalo:', i, vec[count + 1])
+                    data_histogram = createHistogram(sliceList(data_column, i, vec[count + 1]))
 
-            print(f'entropia {i}:', entroPy(prob))
+                # di = createHistogram(data)
+                prob_histogram = probability(data_histogram)
+                count += 1
 
-            results.append(entroPy(prob))
+                # print('probabilidade:', prob)
 
-    
-    for res in results:
-        result += f'{results},'
+                # print(f'entropia {i}:', entroPy(prob_histogram))
 
-    output = open('../dados_rede/data/entropy/1/1.csv', 'w')
-    output.write('ip_origem,porta_origem,ip_destino,porta_destino\n')
-    output.write(result)
+                if(column == 'ip_origem'):
+                    results_ip_origem.append(entroPy(prob_histogram))
+                elif(column == 'porta_origem'):
+                    results_porta_origem.append(entroPy(prob_histogram))
+                elif(column == 'ip_destino'):
+                    results_ip_destino.append(entroPy(prob_histogram))
+                elif(column == 'porta_destino'):
+                    results_porta_destino.append(entroPy(prob_histogram))
+
+                # results.append(entroPy(prob_histogram))
+
+        output = open(f'../dados_rede/data/entropy/{minute}/{day}.csv', 'w')
+        output.write('index,ip_origem,porta_origem,ip_destino,porta_destino\n')
+
+        for i in range(0,len(results_ip_origem)):
+            line = ''
+            line += f'{vec[i]},{results_ip_origem[i]},{results_porta_origem[i]},{results_ip_destino[i]},{results_porta_destino[i]}\n'
+            
+            output.write(line)
+
+        output.close()
+
+
 
 # entropy
 
