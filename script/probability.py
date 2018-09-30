@@ -20,8 +20,6 @@ def readColumns(filePath, firstColumnName, secondColumnName):
 def createDictionary(keyColumn, valueColumn):
     if(len(keyColumn) == len(valueColumn)):
         dictionary = dict(zip(keyColumn, valueColumn))
-        # for i in range(0, len(keyColumn)):
-        #     dictionary[keyColumn[i]] = valueColumn[i]
         return dictionary
     else:
         print('ERRO: listas com tamanhos diferentes')
@@ -34,7 +32,6 @@ def createHistogram(data):
             histogram[value] += 1
         else:
             histogram[value] = 1
-    # print('histograma: ', histogram)
     return histogram
 
 # recebe um dicionário e o intervalo de tempo em minutos como parâmetros
@@ -100,7 +97,6 @@ def entroPy(data):
 #primeiro for para percorrer os arquivos de todos os dias
 for day in range(1,32):
     file = f'../dados_rede/data/csv_data/{day}.csv'
-    # file = './tests/histogramTest.csv'
 
     key = readColumn(file, 'index')
     value = readColumn(file, 'horario')
@@ -112,7 +108,7 @@ for day in range(1,32):
     #mas o cálculo dos intervalos será feito uma coluna de cada vez
     #e ao final os dados serão escritos
     for minute in range(1, 6):
-        vec = minuteMapper(dic, 1)
+        vec = minuteMapper(dic, minute)
 
         #a lista de resultados de cada coluna vai ter o mesmo tamanho
         #visto que o CSV é padronizado
@@ -136,20 +132,12 @@ for day in range(1,32):
             count = 0
             for i in vec:
                 if(i == vec[len(vec) - 1]):
-                    # print('i: ', i)
                     data_histogram = createHistogram(sliceList(data_column, vec[len(vec) - 1], len(data_column)))
-                    # print('intervalo:', vec[len(vec) - 1], len(ip))
                 else:
-                    # print('intervalo:', i, vec[count + 1])
                     data_histogram = createHistogram(sliceList(data_column, i, vec[count + 1]))
 
-                # di = createHistogram(data)
                 prob_histogram = probability(data_histogram)
                 count += 1
-
-                # print('probabilidade:', prob)
-
-                # print(f'entropia {i}:', entroPy(prob_histogram))
 
                 if(column == 'ip_origem'):
                     results_ip_origem.append(entroPy(prob_histogram))
@@ -160,135 +148,46 @@ for day in range(1,32):
                 elif(column == 'porta_destino'):
                     results_porta_destino.append(entroPy(prob_histogram))
 
-                # results.append(entroPy(prob_histogram))
+
+        results_pacotes_ps = []
+        results_bytes_ps = []
+
+        # este for é para calcular a média de bytes/s e pacotes/s
+        averageData = ['pacotes', 'bytes']
+
+        for column in averageData:
+            data_column = readColumn(file, column)
+
+            count = 0
+
+            # ashdauifgaisda olha isso mano
+            for i in vec:
+                res = 0
+                
+                if(i == vec[len(vec) - 1]):
+                    part = sliceList(data_column, vec[len(vec) - 1], len(data_column))
+
+                    for p in part:
+                        res += p
+                else:
+                    part = sliceList(data_column, i, vec[count + 1])
+                    for p in part:
+                        res += p
+
+                count += 1
+                if(column == 'pacotes'):
+                    results_pacotes_ps.append(res / (60 * minute))
+                elif(column == 'bytes'):
+                    results_bytes_ps.append(res / (60 * minute))
 
         output = open(f'../dados_rede/data/entropy/{minute}/{day}.csv', 'w')
-        output.write('index,ip_origem,porta_origem,ip_destino,porta_destino\n')
+        output.write('index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
-        for i in range(0,len(results_ip_origem)):
+        for i in range(0, len(results_ip_origem)):
             line = ''
-            line += f'{vec[i]},{results_ip_origem[i]},{results_porta_origem[i]},{results_ip_destino[i]},{results_porta_destino[i]}\n'
+            line += f'{vec[i]},{results_ip_origem[i]},{results_porta_origem[i]},{results_ip_destino[i]},{results_porta_destino[i]},{results_pacotes_ps[i]},{results_bytes_ps[i]}\n'
             
             output.write(line)
 
+        print(f'arquivo dia {day} minuto {minute} completo')
         output.close()
-
-
-
-# entropy
-
-
-
-
-# key = sliceList(key, 0, 4)
-# value = sliceList(value, 0, len(value))
-
-# di = createHistogram(value)
-# prob = probability(di)
-
-# print(prob)
-
-# print(sliceList(key, 0, len(key)))
-
-# dic = createDictionary(key, value)
-
-# result = minuteMapper(dic, 1)
-
-# print(result)
-
-# esperado: 0 4 6 9
-
-        
-        
-        
-
-        
-        
-    
-
-# key = readColumn('../dados_rede/data/csv_data/1.csv', 'ip_origem')
-# histogram = createHistogram(key)
-# for key, val in histogram.items():
-#     print(f'{key} : {val}')
-
-
-# TODO função que consegue mapear/segregar os valores de acordo com o tempo (em segundos ou minutos?)
-
-# print(createDictionary('../dados_rede/data/csv_data/1.csv', 'index', 'horario'))
-
-# createDictionary(readColumn('../dados_rede/data/csv_data/1.csv', 'index'), readColumn('../dados_rede/data/csv_data/1.csv', 'horario'))
-
-# createHistogram(readColumn('../dados_rede/data/csv_data/1.csv', 'horario'))
-# path = '../dados_rede/data/csv_data/'
-# file = '1.csv'
-
-# histogram = {}
-
-# f=open(f'{path}{file}','r')
-# data = pd.read_csv(f)
-
-# def checkTime(horario):
-#     tempo = horario.split(':')
-#     print(tempo)
-
-# data_index_originIp = data[['horario', 'ip_origem']].to_dict()
-
-# print(data_index_originIp)
-
-
-
-
-
-
-
-# def insertInDict(value):
-    # if value in histogram:
-    #     histogram[value] += 1
-    # else:
-    #     histogram[value] = 1
-
-# columnList = df['ip_origem'].apply(insertInDict)
-
-# output = open('histogramTest.csv', 'w')
-
-# for key, value in histogram.items():
-#     output.write(f'{key},{value}\n')
-
-# output.close()
-
-
-
-
-
-
-
-
-# first = df['second'].tolist()
-# first = df['second'].tolist()
-# print(first)
-# print(len(first),'\n')
-
-# for fuck in first:
-#     print(fuck)
-
-# df = pd.read_csv(file, usecols=['first'])
-# print(df.values) # tere çante o resultado
-
-# column = df['first'].tolist()
-# histogram = {}
-
-# for item in column:
-#     histogram[]
-
-# if 'a' in histogram:
-#     print('deu bom')
-# else:
-#     histogram['a'] = 0
-#     print('deu ruim')
-
-# if 'a' in histogram:
-#     print('deu bom 2')
-#     histogram['a'] += 1
-#     print(histogram['a'])
-# else:
-#     print('deu ruim 2')
