@@ -1,24 +1,30 @@
 import os
-import subprocess
-import sys
-import pandas as pd
+# import subprocess
+# import sys
+# import pandas as pd
 
-os.chdir("../dados_rede/data/csv_data")
+# os.chdir("../dados_rede/data/csv_data")
 
-# target_file = pd.read_csv('1.csv')
-# dictionary = target_file.
-# saved_column = target_file.horario.toList()
+# # target_file = pd.read_csv('1.csv')
+# # dictionary = target_file.
+# # saved_column = target_file.horario.toList()
 
-df = pd.read_csv('1.csv', usecols=['horario', 'ip_origem'])
-result = df.to_dict(orient='records')
+# df = pd.read_csv('1.csv', usecols=['horario', 'ip_origem'])
+# result = df.to_dict(orient='records')
 
-print(result)
+# print(result)
 
 
-# myList = list()
-# myList.append('buceta de anao')
-# myList.append('piroca de gigante')
-# print(myList)
+# # myList = list()
+# # myList.append('buceta de anao')
+# # myList.append('piroca de gigante')
+# # print(myList)
 
-# print(saved_column)
-# print('length:', len(saved_column))
+# # print(saved_column)
+# # print('length:', len(saved_column))
+
+# current working path
+print(os.getcwd())
+
+os.chdir('../')
+print(os.getcwd())
