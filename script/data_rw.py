@@ -8,10 +8,14 @@ diaInicio = 1
 # DEFINA O ÚLTIMO DIA A SER PROCESSADO (na realidade é o último dia + 1)
 diaTermino = 32
 
+# arquivo para logar os erros
+errorFile = open('nfdump_to_csv_errors.txt', 'w+')
+
 # coloque o endereço do diretório onde se encontram os dados
 os.chdir("../dados_rede/data")
 # diretório para guardar os dados em formato CSV
-os.makedirs('csv_data')
+if not os.path.isdir('csv_data'):
+    os.makedirs('csv_data')
 
 
 def get_key(line):
@@ -32,7 +36,6 @@ for dia in range(diaInicio, diaTermino):
 
     while c_horas <= 23:
         arquivo = f'{dia:02}/nfcapd.201303{dia:02}{c_horas:02}{c_minutos:02}'
-        sys.stdout.write(arquivo + "\n")
         try:
             proc = subprocess.Popen(['nfdump', '-r', arquivo],
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
@@ -100,6 +103,7 @@ for dia in range(diaInicio, diaTermino):
                         horario[0], ip_origem, porta_origem, ip_destino, porta_destino, pacotes, bytes))
         except:
             print(f'ERRO NO ARQUIVO {arquivo}')
+            print(sys.exc_info()[0])
             # TODO escrever os erros em outro arquivo para averiguar os mesmos
         c_minutos += 5
         if c_minutos == 60:
