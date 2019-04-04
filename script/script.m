@@ -30,6 +30,13 @@ for M = 1:5
     for S = 2:4
         disp(S)
         % Loop para percorrer os dias da semana, 1 a 1, aplicando seus intervalos
+        %         os arquivos dos dias 25 e 26 possuem menos linhas portanto não
+        %         podem entrar junto nas análises pois além de possuírem menos
+        %         dados (o que por si só já pode quebrar os resultados) eles
+        %         quebram a estrutura do código que leva em consideração que todas
+        %         as matrizes possuem as mesmas dimensões
+        %         Os dias da semana que correspondem aos dias 25 e 26 são,
+        %         respectivamente, os dias 4 e 5
         for D = 1:7
             disp(D)
             %Leitura do arquivo para uma matriz 1440x6 (Para intervalos de 1 minuto)
@@ -41,7 +48,7 @@ for M = 1:5
             if S > 2
               M3 = csvread(strcat("../dados_rede/data/entropy/", num2str(M), "/", num2str(D + 14), ".csv"), 1, 1);
             end
-            if S > 3
+            if (S > 3) && (D ~= 4) && (D ~= 5)
               M4 = csvread(strcat("../dados_rede/data/entropy/", num2str(M), "/", num2str(D + 21), ".csv"), 1, 1);
             end
 
@@ -58,7 +65,7 @@ for M = 1:5
                       Dados(i,:,:) = M2;
                  elseif i == 3
                       Dados(i,:,:) = M3;
-                 else
+                 elseif (D ~= 4) && (D ~= 5)
                       Dados(i,:,:) = M4;
                  end
 
