@@ -1,5 +1,20 @@
-v1 = [1, 2, 3; 4, 5, 6];
-v2 = [7, 8, 9; 10, 11, 12; 13, 14, 15];
-v3 = [16, 17, 18; 19, 20, 21; 22, 23, 24; 25, 26, 27];
+% M1 = csvread("../dados_rede/data/entropy/1/1.csv",1,1);
+% %Leitura dos demais arquivos (2 é o menor número para S)
+% M2 = csvread("../dados_rede/data/entropy/1/8.csv",1,1);
+% if S > 2
+%      M3 = csvread("../dados_rede/data/entropy/1/15.csv",1,1);
+% end
+% if S > 3
+%      M4 = csvread("../dados_rede/data/entropy/1/22.csv",1,1);
+% end
 
-size(v1, 2)
+% os intervalos de minutos
+for M = 1:5
+    % S = quantidade de semanas para se fazer os cálculos
+    for S = 2:4
+    % Os dias a serem lidos
+        for D = 1:7
+            disp(strcat("../dados_rede/data/entropy/", num2str(S), "/", num2str(D)))
+        end
+    end
+end
