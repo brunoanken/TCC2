@@ -114,86 +114,87 @@ for M = 1:5
             mkdir(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D)))
             % Plot 1 Entropia IP de Origem
             f1 = figure(1);
-            plot(1:size(M1, 1),Dados(1,:,1),'--r')
+            disp
+            plot(1:size(M1,2),Dados(1,:,1),'--r')
             hold on
-            plot(1:size(M1, 1),Dados(2,:,1),'--b')
+            plot(1:size(M1,2),Dados(2,:,1),'--b')
             if S > 2
-                 plot(1:size(M1, 1),Dados(3,:,1),'--g')
+                 plot(1:size(M1,2),Dados(3,:,1),'--g')
             end
             if S > 3 && (D ~= 4) && (D ~= 5)
-                 plot(1:size(M1, 1),Dados(4,:,1),'--p')
+                 plot(1:size(M1,2),Dados(4,:,1),'--p')
             end
-            plot(1:size(M1, 1),Baseline(:,1),'-k');          
+            plot(1:size(M1,2),Baseline(:,1),'-k');          
             saveas(f1, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.jpg"))
 
             % Plot 2 Entropia Porta de Origem
             f2 = figure(2);
-            plot(1:size(M1, 1),Dados(1,:,2),'--r')
+            plot(1:size(M1,2),Dados(1,:,2),'--r')
             hold on
-            plot(1:size(M1, 1),Dados(2,:,2),'--b')
+            plot(1:size(M1,2),Dados(2,:,2),'--b')
             if S > 2
-                 plot(1:size(M1, 1),Dados(3,:,2),'--g')
+                 plot(1:size(M1,2),Dados(3,:,2),'--g')
             end
             if S > 3 && (D ~= 4) && (D ~= 5)
-                 plot(1:size(M1, 1),Dados(4,:,2),'--p')
+                 plot(1:size(M1,2),Dados(4,:,2),'--p')
             end
-            plot(1:size(M1, 1),Baseline(:,2),'-k');
+            plot(1:size(M1,2),Baseline(:,2),'-k');
             saveas(f2, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portaorigem.jpg"))
 
             % Plot 3 Entropia IP de Destino
             f3 = figure(3);
-            plot(1:size(M1, 1),Dados(1,:,3),'--r')
+            plot(1:size(M1,2),Dados(1,:,3),'--r')
             hold on
-            plot(1:size(M1, 1),Dados(2,:,3),'--b')
+            plot(1:size(M1,2),Dados(2,:,3),'--b')
             if S > 2
-                 plot(1:size(M1, 1),Dados(3,:,3),'--g')
+                 plot(1:size(M1,2),Dados(3,:,3),'--g')
             end
             if S > 3 && (D ~= 4) && (D ~= 5)
-                 plot(1:size(M1, 1),Dados(4,:,3),'--p')
+                 plot(1:size(M1,2),Dados(4,:,3),'--p')
             end
-            plot(1:size(M1, 1),Baseline(:,3),'-k');
+            plot(1:size(M1,2),Baseline(:,3),'-k');
             saveas(f3, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/ipdestino.jpg"))
 
             % Plot 4 Entropia Porta de Destino
             f4 = figure(4);
-            plot(1:size(M1, 1),Dados(1,:,4),'--r')
+            plot(1:size(M1,2),Dados(1,:,4),'--r')
             hold on
-            plot(1:size(M1, 1),Dados(2,:,4),'--b')
+            plot(1:size(M1,2),Dados(2,:,4),'--b')
             if S > 2
-                 plot(1:size(M1, 1),Dados(3,:,4),'--g')
+                 plot(1:size(M1,2),Dados(3,:,4),'--g')
             end
             if S > 3 && (D ~= 4) && (D ~= 5)
-                 plot(1:size(M1, 1),Dados(4,:,4),'--p')
+                 plot(1:size(M1,2),Dados(4,:,4),'--p')
             end
-            plot(1:size(M1, 1),Baseline(:,4),'-k');
+            plot(1:size(M1,2),Baseline(:,4),'-k');
             saveas(f4, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portadestino.jpg"))
 
             % Plot 5 Pacotes por Segundo
             f5 = figure(5);
-            plot(1:size(M1, 1),Dados(1,:,5),'--r')
+            plot(1:size(M1,2),Dados(1,:,5),'--r')
             hold on
-            plot(1:size(M1, 1),Dados(2,:,5),'--b')
+            plot(1:size(M1,2),Dados(2,:,5),'--b')
             if S > 2
-                 plot(1:size(M1, 1),Dados(3,:,5),'--g')
+                 plot(1:size(M1,2),Dados(3,:,5),'--g')
             end
             if S > 3 && (D ~= 4) && (D ~= 5)
-                 plot(1:size(M1, 1),Dados(4,:,5),'--p')
+                 plot(1:size(M1,2),Dados(4,:,5),'--p')
             end
-            plot(1:size(M1, 1),Baseline(:,5),'-k');
+            plot(1:size(M1,2),Baseline(:,5),'-k');
             saveas(f5, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/pacotesps.jpg"))
 
             % Plot 6 Bytes por Segundo
             f6 = figure(6);
-            plot(1:size(M1, 1),Dados(1,:,6),'--r')
+            plot(1:size(M1,2),Dados(1,:,6),'--r')
             hold on
-            plot(1:size(M1, 1),Dados(2,:,6),'--b')
+            plot(1:size(M1,2),Dados(2,:,6),'--b')
             if S > 2
-                 plot(1:size(M1, 1),Dados(3,:,6),'--g')
+                 plot(1:size(M1,2),Dados(3,:,6),'--g')
             end
             if S > 3 && (D ~= 4) && (D ~= 5)
-                 plot(1:size(M1, 1),Dados(4,:,6),'--p')
+                 plot(1:size(M1,2),Dados(4,:,6),'--p')
             end
-            plot(1:size(M1, 1),Baseline(:,6),'-k');
+            plot(1:size(M1,2),Baseline(:,6),'-k');
             saveas(f6, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.jpg"))
         end
     end
