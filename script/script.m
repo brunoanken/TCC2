@@ -25,9 +25,11 @@
 
 % Os intervalos de minutos a serem percorridos
 for M = 1:5
+    disp("minuto")
     disp(M)
     % Os intervalos de semanas a serem rodados
     for S = 2:4
+        disp("intervalo de semana")
         disp(S)
         % Loop para percorrer os dias da semana, 1 a 1, aplicando seus intervalos
         %         os arquivos dos dias 25 e 26 possuem menos linhas portanto não
@@ -38,6 +40,7 @@ for M = 1:5
         %         Os dias da semana que correspondem aos dias 25 e 26 são,
         %         respectivamente, os dias 4 e 5
         for D = 1:7
+            disp("dia")
             disp(D)
             %Leitura do arquivo para uma matriz 1440x6 (Para intervalos de 1 minuto)
             %Para intervalos de 5 min a matriz será 288x6 e para 10 minutos 144x6
@@ -93,7 +96,7 @@ for M = 1:5
             %Para cada instante de tempo
             for t=1 : size(Dados,2)
 
-%                  disp(t);
+                 disp(t);
 
                  %Para cada dimensão analisada
                  for d=1 : size(Dados,3)
@@ -114,16 +117,23 @@ for M = 1:5
             mkdir(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D)))
             % Plot 1 Entropia IP de Origem
             f1 = figure(1);
+            f1Legends = {"Entropia na primeira semana", "Entropia na segunda semana"};
             plot(1:size(M1, 1),Dados(1,:,1),'--r')
             hold on
             plot(1:size(M1, 1),Dados(2,:,1),'--b')
             if S > 2
                  plot(1:size(M1, 1),Dados(3,:,1),'--g')
+                 f1Legends{end+1} = "Entropia na terceira semana"; 
             end
-            if S > 3 && (D ~= 4) && (D ~= 5)
+            if S > 3 && (D ~= 4) && (D ~= 5) 
                  plot(1:size(M1, 1),Dados(4,:,1),'--p')
+                 f1Legends{end+1} = "Entropia na quarta semana";
             end
-            plot(1:size(M1, 1),Baseline(:,1),'-k');          
+            plot(1:size(M1, 1),Baseline(:,1),'-k');
+            title(["Entropia do IP de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos"])
+            xlabel(["Intervalos de ", num2str(M), " minutos"])
+            ylabel("Entropia")
+            legend(f1Legends, "Location", "southwest")
             saveas(f1, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.jpg"))
 
             % Plot 2 Entropia Porta de Origem
@@ -138,6 +148,9 @@ for M = 1:5
                  plot(1:size(M1, 1),Dados(4,:,2),'--p')
             end
             plot(1:size(M1, 1),Baseline(:,2),'-k');
+            title(["Entropia da porta de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos"])
+            xlabel(["Intervalos de ", num2str(M), " minutos"])
+            ylabel("Entropia")
             saveas(f2, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portaorigem.jpg"))
 
             % Plot 3 Entropia IP de Destino
@@ -152,6 +165,9 @@ for M = 1:5
                  plot(1:size(M1, 1),Dados(4,:,3),'--p')
             end
             plot(1:size(M1, 1),Baseline(:,3),'-k');
+            title(["Entropia do IP de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos"])
+            xlabel(["Intervalos de ", num2str(M), " minutos"])
+            ylabel("Entropia")
             saveas(f3, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/ipdestino.jpg"))
 
             % Plot 4 Entropia Porta de Destino
@@ -166,6 +182,9 @@ for M = 1:5
                  plot(1:size(M1, 1),Dados(4,:,4),'--p')
             end
             plot(1:size(M1, 1),Baseline(:,4),'-k');
+            title(["Entropia da porta de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos"])
+            xlabel(["Intervalos de ", num2str(M), " minutos"])
+            ylabel("Entropia")
             saveas(f4, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portadestino.jpg"))
 
             % Plot 5 Pacotes por Segundo
@@ -180,6 +199,9 @@ for M = 1:5
                  plot(1:size(M1, 1),Dados(4,:,5),'--p')
             end
             plot(1:size(M1, 1),Baseline(:,5),'-k');
+            title(["Média de pacotes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos"])
+            xlabel(["Intervalos de ", num2str(M), " minutos"])
+            ylabel("Média de pacotes por segundo")
             saveas(f5, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/pacotesps.jpg"))
 
             % Plot 6 Bytes por Segundo
@@ -194,6 +216,9 @@ for M = 1:5
                  plot(1:size(M1, 1),Dados(4,:,6),'--p')
             end
             plot(1:size(M1, 1),Baseline(:,6),'-k');
+            title(["Média de bytes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos"])
+            xlabel(["Intervalos de ", num2str(M), " minutos"])
+            ylabel("Média de bytes por segundo")
             saveas(f6, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.jpg"))
         end
     end
