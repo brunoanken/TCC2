@@ -2,3 +2,4 @@
 dados_rede/
 *.csv
 imagens
+venv/
