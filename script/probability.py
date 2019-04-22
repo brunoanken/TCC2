@@ -5,18 +5,24 @@ import pandas as pd
 import math
 
 # lê a coluna passada como argumento e retorna seus valores em uma lista
+
+
 def readColumn(filePath, columnName):
-    f=open(filePath,'r')
+    f = open(filePath, 'r')
     data = pd.read_csv(f)
     return data[columnName].tolist()
 
 # lê as duas colunas passadas como argumento e retorna seus valores
+
+
 def readColumns(filePath, firstColumnName, secondColumnName):
-    f=open(filePath,'r')
+    f = open(filePath, 'r')
     data = pd.read_csv(f)
     return data[[firstColumnName, secondColumnName]]
 
 # cria um dicionário usando uma lista como chave e outra lista como valor
+
+
 def createDictionary(keyColumn, valueColumn):
     if(len(keyColumn) == len(valueColumn)):
         dictionary = dict(zip(keyColumn, valueColumn))
@@ -25,6 +31,8 @@ def createDictionary(keyColumn, valueColumn):
         print('ERRO: listas com tamanhos diferentes')
 
 # cria um histograma dos valores da lista passada como parâmetro
+
+
 def createHistogram(data):
     histogram = {}
     for value in data:
@@ -40,6 +48,8 @@ def createHistogram(data):
 # o intervalo será medido em minutos
 # desta maneira, será possível saber de qual índice a qual índice
 # se aplica a divisão no intervalo em minutos definido
+
+
 def minuteMapper(dictionary, interval):
     firstKey = next(iter(dictionary))
 
@@ -48,7 +58,7 @@ def minuteMapper(dictionary, interval):
     # o primeiro valor do primeiro intervalo sempre será o primeiro item, de index 0
     intervalIndexes = [0]
     intervalCounter = 0
-    
+
     for index in dictionary:
         minute = int(dictionary[index].split(':')[1])
 
@@ -66,11 +76,15 @@ def minuteMapper(dictionary, interval):
     return intervalIndexes
 
 # dá slice na lista de acordo com os valores passados e retorna o resultado
+
+
 def sliceList(data, start, end):
     return data[start:end]
 
 # calcula a probabilidade de ocorrência de cada item em um histograma
 # retorna o resultado em forma de dicionário
+
+
 def probability(histogram):
     total = 0
     for key in histogram:
@@ -90,12 +104,13 @@ def entroPy(data):
     entropy = 0
     for key in data:
         entropy += - data[key] * math.log2(data[key])
-    
+
     return entropy
 
+
 # range(start,end) vai de start até end - 1
-#primeiro for para percorrer os arquivos de todos os dias
-for day in range(1,32):
+# primeiro for para percorrer os arquivos de todos os dias
+for day in range(1, 32):
     file = f'../dados_rede/data/csv_data/{day}.csv'
 
     key = readColumn(file, 'index')
@@ -103,27 +118,28 @@ for day in range(1,32):
 
     dic = createDictionary(key, value)
 
-    #mais um for, pra ir de acordo com os intervalos em minutos (1, 2, 3, 4, 5)
-    #vai ser o mesmo intervalo para todas as colunas
-    #mas o cálculo dos intervalos será feito uma coluna de cada vez
-    #e ao final os dados serão escritos
+    # mais um for, pra ir de acordo com os intervalos em minutos (1, 2, 3, 4, 5)
+    # vai ser o mesmo intervalo para todas as colunas
+    # mas o cálculo dos intervalos será feito uma coluna de cada vez
+    # e ao final os dados serão escritos
     for minute in range(1, 6):
         vec = minuteMapper(dic, minute)
 
-        #a lista de resultados de cada coluna vai ter o mesmo tamanho
-        #visto que o CSV é padronizado
+        # a lista de resultados de cada coluna vai ter o mesmo tamanho
+        # visto que o CSV é padronizado
 
-        #lista pra posterior escrita no csv
+        # lista pra posterior escrita no csv
         results_ip_origem = []
         results_porta_origem = []
         results_ip_destino = []
         results_porta_destino = []
 
-        #cria a linha do csv
+        # cria a linha do csv
         result = ''
 
-        #mais um for, pra percorrer todos as colunas em que a entropia deve ser calculada
-        entropyData = ['ip_origem', 'porta_origem', 'ip_destino', 'porta_destino']
+        # mais um for, pra percorrer todos as colunas em que a entropia deve ser calculada
+        entropyData = ['ip_origem', 'porta_origem',
+                       'ip_destino', 'porta_destino']
 
         for column in entropyData:
 
@@ -132,9 +148,11 @@ for day in range(1,32):
             count = 0
             for i in vec:
                 if(i == vec[len(vec) - 1]):
-                    data_histogram = createHistogram(sliceList(data_column, vec[len(vec) - 1], len(data_column)))
+                    data_histogram = createHistogram(
+                        sliceList(data_column, vec[len(vec) - 1], len(data_column)))
                 else:
-                    data_histogram = createHistogram(sliceList(data_column, i, vec[count + 1]))
+                    data_histogram = createHistogram(
+                        sliceList(data_column, i, vec[count + 1]))
 
                 prob_histogram = probability(data_histogram)
                 count += 1
@@ -147,7 +165,6 @@ for day in range(1,32):
                     results_ip_destino.append(entroPy(prob_histogram))
                 elif(column == 'porta_destino'):
                     results_porta_destino.append(entroPy(prob_histogram))
-
 
         results_pacotes_ps = []
         results_bytes_ps = []
@@ -163,9 +180,10 @@ for day in range(1,32):
             # ashdauifgaisda olha isso mano
             for i in vec:
                 res = 0
-                
+
                 if(i == vec[len(vec) - 1]):
-                    part = sliceList(data_column, vec[len(vec) - 1], len(data_column))
+                    part = sliceList(
+                        data_column, vec[len(vec) - 1], len(data_column))
 
                     for p in part:
                         res += p
@@ -181,12 +199,13 @@ for day in range(1,32):
                     results_bytes_ps.append(res / (60 * minute))
 
         output = open(f'../dados_rede/data/entropy/{minute}/{day}.csv', 'w')
-        output.write('index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
+        output.write(
+            'index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
         for i in range(0, len(results_ip_origem)):
             line = ''
             line += f'{vec[i]},{results_ip_origem[i]},{results_porta_origem[i]},{results_ip_destino[i]},{results_porta_destino[i]},{results_pacotes_ps[i]},{results_bytes_ps[i]}\n'
-            
+
             output.write(line)
 
         print(f'arquivo dia {day} minuto {minute} completo')
