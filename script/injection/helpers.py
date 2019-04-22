@@ -1,4 +1,0 @@
-def redefineIndexes():
-
-
-def joinLists():
