@@ -22,7 +22,7 @@
 % r7 = [7, 14, 21, 28];
 
 % não vai até o 31 pois o intervalo é de 4 semanas no máximo
-
+clear all; close all; clc;
 % Os intervalos de minutos a serem percorridos
 for M = 1:5
     disp("minuto")
