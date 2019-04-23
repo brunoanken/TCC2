@@ -30,6 +30,9 @@ def insertValueInto(data, position, value):
 # no DoS é utilizado apenas 1 IP e porta de origem para vários IPs e portas de destino
 # no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
 
+# TODO: maximum bytes and packets in a file and use it those values as a limit in data generation
+# TODO: checar os IPs de destino presentes no arquivo e utilizar apenas estes valores
+
 # ========================================
 # data generation functions              =
 # ========================================
@@ -38,9 +41,25 @@ def insertValueInto(data, position, value):
 def generateIp():
     _min = int(0)
     _max = int(255)
+
     random.seed()
-    print(f'{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}')
+
     return f'{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}'
+
+
+def generatePort():
+    _min = int(0)
+    _max = int(65535)
+
+    random.seed()
+
+    return random.randint(_min, _max)
+
+
+def generatePacketsOrBytes(_min, _max):
+    random.seed()
+
+    return random.randint(_min, _max)
 
 
 path = '.test/1.csv'
@@ -51,15 +70,25 @@ horarioResult = insertValueInto(horario, 2, 'HorarioResult')
 ipOrigem = readColumn(file, 'ip_origem')
 ipOrigemResult = insertValueInto(ipOrigem, 2, generateIp())
 portaOrigem = readColumn(file, 'porta_origem')
-portaOrigemResult = insertValueInto(portaOrigem, 2, 'PortaOrigemResult')
+# print(min(portaOrigem))
+portaOrigemResult = insertValueInto(portaOrigem, 2, generatePort())
 ipDestino = readColumn(file, 'ip_destino')
 ipDestinoResult = insertValueInto(ipDestino, 2, 'IpDestinoResult')
 portaDestino = readColumn(file, 'porta_destino')
-portaDestinoResult = insertValueInto(portaDestino, 2, 'PortaDestinoResult')
+# print(min(portaDestino))
+portaDestinoResult = insertValueInto(portaDestino, 2, generatePort())
 pacotes = readColumn(file, 'pacotes')
-pacotesResult = insertValueInto(pacotes, 2, 'Pacotassos')
+# print(max(pacotes))
+packetsMax = max(pacotes)
+packetsMin = min(pacotes)
+pacotesResult = insertValueInto(
+    pacotes, 2, generatePacketsOrBytes(packetsMin, packetsMax))
 _bytes = readColumn(file, 'bytes')
-_bytesResult = insertValueInto(_bytes, 2, 'Bytes demais')
+# print(min(_bytes))
+bytesMax = max(_bytes)
+bytesMin = min(_bytes)
+_bytesResult = insertValueInto(
+    _bytes, 2, generatePacketsOrBytes(bytesMin, bytesMax))
 
 output = open('.test/test.csv', 'w')
 output.write(
@@ -70,7 +99,7 @@ for i in range(0, 5):
     print('writing...')
     print(i)
     row = ''
-    row += f'{i},{horarioResult[i]},{ipOrigemResult[i]},{portaOrigemResult[i]},{ipDestinoResult[i]},{portaDestinoResult[i]},{pacotesResult[i]},{_bytesResult[i]}\n'
+    row += f'{i},{horarioResult[i]},{ipOrigemResult[i]},{int(portaOrigemResult[i])},{ipDestinoResult[i]},{int(portaDestinoResult[i])},{int(pacotesResult[i])},{int(_bytesResult[i])}\n'
     output.write(row)
 
 # bora limpar a sujeira
