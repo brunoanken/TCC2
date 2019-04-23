@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 # ========================================
 # files and lists manipulation functions =
@@ -14,23 +15,41 @@ def readColumn(file, columnName):
     return file[columnName].tolist()
 
 
+def sliceList(data, start, end):
+    return data[start:end]
+
+
 def insertValueInto(data, position, value):
-    prePosition = data[0:position]
-    posPosition = data[position:len(data)]
+    prePosition = sliceList(data, 0, position)
+    posPosition = sliceList(data, position, len(data))
     prePosition.append(value)
     return prePosition + posPosition
 
+
+# ataques que serão implementados: DoS e DDoS
+# no DoS é utilizado apenas 1 IP e porta de origem para vários IPs e portas de destino
+# no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
+
 # ========================================
-# files and lists manipulation functions =
+# data generation functions              =
 # ========================================
 
 
-file = readFile('.test/1.csv')
+def generateIp():
+    _min = int(0)
+    _max = int(255)
+    random.seed()
+    print(f'{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}')
+    return f'{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}'
+
+
+path = '.test/1.csv'
+file = readFile(path)
 
 horario = readColumn(file, 'horario')
 horarioResult = insertValueInto(horario, 2, 'HorarioResult')
 ipOrigem = readColumn(file, 'ip_origem')
-ipOrigemResult = insertValueInto(ipOrigem, 2, 'IPOrigemResult')
+ipOrigemResult = insertValueInto(ipOrigem, 2, generateIp())
 portaOrigem = readColumn(file, 'porta_origem')
 portaOrigemResult = insertValueInto(portaOrigem, 2, 'PortaOrigemResult')
 ipDestino = readColumn(file, 'ip_destino')
@@ -44,10 +63,17 @@ _bytesResult = insertValueInto(_bytes, 2, 'Bytes demais')
 
 output = open('.test/test.csv', 'w')
 output.write(
-    'index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
+    'index,horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
-for i in range(0, len(horarioResult)):
+# for i in range(0, len(horarioResult)):
+for i in range(0, 5):
     print('writing...')
     print(i)
-    row = f'{i},{horarioResult},{ipOrigemResult[i]},{portaOrigemResult[i]},{ipDestinoResult[i]},{portaDestinoResult[i]},{pacotesResult[i]},{_bytesResult[i]}\n'
+    row = ''
+    row += f'{i},{horarioResult[i]},{ipOrigemResult[i]},{portaOrigemResult[i]},{ipDestinoResult[i]},{portaDestinoResult[i]},{pacotesResult[i]},{_bytesResult[i]}\n'
     output.write(row)
+
+# bora limpar a sujeira
+output.close()
+
+print('finished!')
