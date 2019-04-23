@@ -150,7 +150,7 @@ _bytes = readColumn(file, 'bytes')
 
 timeMap = createDictionary(index, horario)
 
-
+originalLen = len(horario)
 # =========================
 # =                       =
 # =========================
@@ -161,14 +161,16 @@ timeMap = createDictionary(index, horario)
 
 # primeiro vamos fazer um teste para conseguir colocar 1 linha nova a cada 30 minutos
 # apenas no final do arquivo (time stamp sempre do final do momento)
-amount = 1
+amount = 2
 interval = 30
 
-# bora calcular quais serão os novos intervalos após os dados serem injetados
-# afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
+# calcular o mapeamento de index para horário de acordo com o intervalo definido
 minuteMap = minuteMapper(timeMap, interval)
 # adicionar o index do último instante do arquivo pois nele também deverão ser adicionados novos dados
 minuteMap.append(index[-1])
+
+# bora calcular quais serão os novos intervalos após os dados serem injetados
+# afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
 reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
 
 # estou adicionando apenas nos últimos instantes do minuto
@@ -176,35 +178,47 @@ reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
 minuteMap.pop(0)
 reindexedMinuteMap.pop(0)
 
+print(minuteMap)
+print(reindexedMinuteMap)
+
 # get the maximuns and minimuns necessary to keep some data quality
 packetsMin = min(pacotes)
 packetsMax = max(pacotes)
 bytesMin = min(_bytes)
 bytesMax = max(_bytes)
 
-# caos, sk8 e destruição
-for minute in minuteMap:
 
-    # inserir os dados
-    horario = insertValueInto(horario, minute, 'HorarioResult')
-    ipOrigem = insertValueInto(ipOrigem, minute, generateIp())
-    portaOrigem = insertValueInto(portaOrigem, minute, generatePort())
-    ipDestino = insertValueInto(ipDestino, minute, generateIp())
-    portaDestino = insertValueInto(portaDestino, minute, generatePort())
-    pacotes = pacotesResult = insertValueInto(
-        pacotes, minute, generatePacketsOrBytes(packetsMin, packetsMax))
-    _bytes = insertValueInto(
-        _bytes, minute, generatePacketsOrBytes(bytesMin, bytesMax))
+# injetar anomalias na quantidade indicada
+# (se colocar este for antes do for do minuteMap a injeção de anomalias fica mais espalhada)
+# (se deixar depois ele cola tudo junto no final dos minutos)
+# (mas aí fica foda pra setar O HORÁRIO...)
+# (mas tem uma gambi bonita: pegar o mesmo horário que o logo antes ou depois da posição em que o dado será injetado)
+for am in range(0, amount):
+    # caos, sk8 e destruição
+    for minute in minuteMap:
 
-    if minute == index[-1]:
-        horario.append('HorarioResult')
-        ipOrigem.append(generateIp())
-        portaOrigem.append(generatePort())
-        ipDestino.append(generateIp())
-        portaDestino.append(generatePort())
-        pacotes.append(generatePacketsOrBytes(packetsMin, packetsMax))
-        _bytes.append(generatePacketsOrBytes(bytesMin, bytesMax))
+        # inserir os dados
+        horario = insertValueInto(horario, minute, horario[minute])
+        ipOrigem = insertValueInto(ipOrigem, minute, generateIp())
+        portaOrigem = insertValueInto(portaOrigem, minute, generatePort())
+        ipDestino = insertValueInto(ipDestino, minute, generateIp())
+        portaDestino = insertValueInto(portaDestino, minute, generatePort())
+        pacotes = pacotesResult = insertValueInto(
+            pacotes, minute, generatePacketsOrBytes(packetsMin, packetsMax))
+        _bytes = insertValueInto(
+            _bytes, minute, generatePacketsOrBytes(bytesMin, bytesMax))
 
+        if minute == index[-1]:
+            horario.append(horario[-1])
+            ipOrigem.append(generateIp())
+            portaOrigem.append(generatePort())
+            ipDestino.append(generateIp())
+            portaDestino.append(generatePort())
+            pacotes.append(generatePacketsOrBytes(packetsMin, packetsMax))
+            _bytes.append(generatePacketsOrBytes(bytesMin, bytesMax))
+
+finalLen = len(horario)
+print(finalLen - originalLen)
 # write it all
 output = open('.test/test.csv', 'w')
 output.write(
