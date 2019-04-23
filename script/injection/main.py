@@ -57,7 +57,6 @@ def minuteMapper(dictionary, interval):
 # no DoS é utilizado apenas 1 IP e porta de origem para vários IPs e portas de destino
 # no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
 
-# TODO: maximum bytes and packets in a file and use it those values as a limit in data generation
 # TODO: checar os IPs de destino presentes no arquivo e utilizar apenas estes valores
 
 # ========================================
@@ -150,7 +149,7 @@ pacotes = readColumn(file, 'pacotes')
 _bytes = readColumn(file, 'bytes')
 
 timeMap = createDictionary(index, horario)
-print(minuteMapper(timeMap, 30))
+
 
 # =========================
 # =                       =
@@ -161,12 +160,21 @@ print(minuteMapper(timeMap, 30))
 # dá pra inserir no começo e no fim...
 
 # primeiro vamos fazer um teste para conseguir colocar 1 linha nova a cada 30 minutos
+# apenas no final do arquivo (time stamp sempre do final do momento)
 amount = 1
 interval = 30
+
 # bora calcular quais serão os novos intervalos após os dados serem injetados
 # afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
-minuteMap = reindexMinuteMap(minuteMapper(timeMap, interval), amount)
-print(minuteMap)
+minuteMap = minuteMapper(timeMap, interval)
+# adicionar o index do último instante do arquivo pois nele também deverão ser adicionados novos dados
+minuteMap.append(index[-1])
+reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
+
+# estou adicionando apenas nos últimos instantes do minuto
+# então não é necessário o primeiro item, que sempre será o primeiro instante dos arquivos
+minuteMap.pop(0)
+reindexedMinuteMap.pop(0)
 
 # get the maximuns and minimuns necessary to keep some data quality
 packetsMin = min(pacotes)
@@ -174,29 +182,41 @@ packetsMax = max(pacotes)
 bytesMin = min(_bytes)
 bytesMax = max(_bytes)
 
-# generate and insert values
-horarioResult = insertValueInto(horario, 2, 'HorarioResult')
-ipOrigemResult = insertValueInto(ipOrigem, 2, generateIp())
-portaOrigemResult = insertValueInto(portaOrigem, 2, generatePort())
-ipDestinoResult = insertValueInto(ipDestino, 2, generateIp())
-portaDestinoResult = insertValueInto(portaDestino, 2, generatePort())
-pacotesResult = insertValueInto(
-    pacotes, 2, generatePacketsOrBytes(packetsMin, packetsMax))
-_bytesResult = insertValueInto(
-    _bytes, 2, generatePacketsOrBytes(bytesMin, bytesMax))
+# caos, sk8 e destruição
+for minute in minuteMap:
+
+    # inserir os dados
+    horario = insertValueInto(horario, minute, 'HorarioResult')
+    ipOrigem = insertValueInto(ipOrigem, minute, generateIp())
+    portaOrigem = insertValueInto(portaOrigem, minute, generatePort())
+    ipDestino = insertValueInto(ipDestino, minute, generateIp())
+    portaDestino = insertValueInto(portaDestino, minute, generatePort())
+    pacotes = pacotesResult = insertValueInto(
+        pacotes, minute, generatePacketsOrBytes(packetsMin, packetsMax))
+    _bytes = insertValueInto(
+        _bytes, minute, generatePacketsOrBytes(bytesMin, bytesMax))
+
+    if minute == index[-1]:
+        horario.append('HorarioResult')
+        ipOrigem.append(generateIp())
+        portaOrigem.append(generatePort())
+        ipDestino.append(generateIp())
+        portaDestino.append(generatePort())
+        pacotes.append(generatePacketsOrBytes(packetsMin, packetsMax))
+        _bytes.append(generatePacketsOrBytes(bytesMin, bytesMax))
 
 # write it all
 output = open('.test/test.csv', 'w')
 output.write(
     'index,horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
-# for i in range(0, len(horarioResult)):
-for i in range(0, 5):
-    print('writing...')
-    print(i)
+for i in range(0, len(horario)):
+    # print('writing...')
+    # print(i)
     row = ''
-    row += f'{i},{horarioResult[i]},{ipOrigemResult[i]},{int(portaOrigemResult[i])},{ipDestinoResult[i]},{int(portaDestinoResult[i])},{int(pacotesResult[i])},{int(_bytesResult[i])}\n'
+    row += f'{i},{horario[i]},{ipOrigem[i]},{int(portaOrigem[i])},{ipDestino[i]},{int(portaDestino[i])},{int(pacotes[i])},{int(_bytes[i])}\n'
     output.write(row)
+
 
 # bora limpar a sujeira
 output.close()
