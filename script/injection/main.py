@@ -53,11 +53,6 @@ def minuteMapper(dictionary, interval):
     return intervalIndexes
 
 
-# TODO: pegar a função que faz o mapeamento de index para minutos
-# fazer outra função que vai modificar o resultado da primeira de acordo
-# com novos dados sendo injetados pois isto modifica o valor dos índices que correspondem aos minutos
-
-
 # ataques que serão implementados: DoS e DDoS
 # no DoS é utilizado apenas 1 IP e porta de origem para vários IPs e portas de destino
 # no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
@@ -100,6 +95,47 @@ def generatePacketsOrBytes(_min, _max):
     return random.randint(_min, _max)
 
 
+# ========================================
+# time generation functions              =
+# ========================================
+
+
+def generateSecond():
+    secondMin = 0
+    secondMax = 59
+    random.seed()
+
+    return random.randint(secondMin, secondMax)
+
+
+def generateMinute(minuteMin, minuteMax):
+    random.seed()
+
+    return random.randint(minuteMin, minuteMax)
+
+
+def generateFormattedMinute(minuteMin, minuteMax):
+    return f'{generateMinute(minuteMin, minuteMax):02d}'
+
+
+def generateTimestamp(hour, minuteMin, minuteMax):
+    return f'{hour}:{generateFormattedMinute(minuteMin, minuteMax)}:{generateSecond()}'
+
+# ==========================
+# = other helper functions =
+# ==========================
+
+
+def reindexMinuteMap(minuteMap, amount):
+    data = []
+    for i in range(0, len(minuteMap)):
+        data.append(minuteMap[i] + (i * amount))
+
+    return data
+
+# =============================
+
+
 path = '.test/1.csv'
 file = readFile(path)
 
@@ -114,18 +150,35 @@ pacotes = readColumn(file, 'pacotes')
 _bytes = readColumn(file, 'bytes')
 
 timeMap = createDictionary(index, horario)
+print(minuteMapper(timeMap, 30))
+
+# =========================
+# =                       =
+# =========================
+
+# gerar e inserir apenas dados nos últimos momentos do minuto? No comecinho?
+# fica padronizado, mas isto apenas se realmente a ordem do timestamp importar neste caso
+# dá pra inserir no começo e no fim...
+
+# primeiro vamos fazer um teste para conseguir colocar 1 linha nova a cada 30 minutos
+amount = 1
+interval = 30
+# bora calcular quais serão os novos intervalos após os dados serem injetados
+# afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
+minuteMap = reindexMinuteMap(minuteMapper(timeMap, interval), amount)
+print(minuteMap)
 
 # get the maximuns and minimuns necessary to keep some data quality
-packetsMax = max(pacotes)
 packetsMin = min(pacotes)
-bytesMax = max(_bytes)
+packetsMax = max(pacotes)
 bytesMin = min(_bytes)
+bytesMax = max(_bytes)
 
 # generate and insert values
 horarioResult = insertValueInto(horario, 2, 'HorarioResult')
 ipOrigemResult = insertValueInto(ipOrigem, 2, generateIp())
 portaOrigemResult = insertValueInto(portaOrigem, 2, generatePort())
-ipDestinoResult = insertValueInto(ipDestino, 2, 'IpDestinoResult')
+ipDestinoResult = insertValueInto(ipDestino, 2, generateIp())
 portaDestinoResult = insertValueInto(portaDestino, 2, generatePort())
 pacotesResult = insertValueInto(
     pacotes, 2, generatePacketsOrBytes(packetsMin, packetsMax))
