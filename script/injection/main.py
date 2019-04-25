@@ -88,37 +88,11 @@ def generatePort():
     return random.randint(_min, _max)
 
 
-def generatePacketsOrBytes(_min, _max):
+def generateRandomInt(_min, _max):
     random.seed()
 
     return random.randint(_min, _max)
 
-
-# ========================================
-# time generation functions              =
-# ========================================
-
-
-def generateSecond():
-    secondMin = 0
-    secondMax = 59
-    random.seed()
-
-    return random.randint(secondMin, secondMax)
-
-
-def generateMinute(minuteMin, minuteMax):
-    random.seed()
-
-    return random.randint(minuteMin, minuteMax)
-
-
-def generateFormattedMinute(minuteMin, minuteMax):
-    return f'{generateMinute(minuteMin, minuteMax):02d}'
-
-
-def generateTimestamp(hour, minuteMin, minuteMax):
-    return f'{hour}:{generateFormattedMinute(minuteMin, minuteMax)}:{generateSecond()}'
 
 # ==========================
 # = other helper functions =
@@ -161,13 +135,15 @@ originalLen = len(horario)
 
 # primeiro vamos fazer um teste para conseguir colocar 1 linha nova a cada 30 minutos
 # apenas no final do arquivo (time stamp sempre do final do momento)
-amount = 2
+amount = 5
 interval = 30
 
 # calcular o mapeamento de index para horário de acordo com o intervalo definido
 minuteMap = minuteMapper(timeMap, interval)
+minuteMapLen = len(minuteMap)
 # adicionar o index do último instante do arquivo pois nele também deverão ser adicionados novos dados
-minuteMap.append(index[-1])
+# minuteMap.append(index[-1])
+# na real não, o último index já diz qual que é o último minuto
 
 # bora calcular quais serão os novos intervalos após os dados serem injetados
 # afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
@@ -175,18 +151,15 @@ reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
 
 # estou adicionando apenas nos últimos instantes do minuto
 # então não é necessário o primeiro item, que sempre será o primeiro instante dos arquivos
-minuteMap.pop(0)
-reindexedMinuteMap.pop(0)
-
-print(minuteMap)
-print(reindexedMinuteMap)
+# minuteMap.pop(0)
+# reindexedMinuteMap.pop(0)
+# porém mantendo este fica mais fácil de se alocar dados de maneira aleatória!
 
 # get the maximuns and minimuns necessary to keep some data quality
 packetsMin = min(pacotes)
 packetsMax = max(pacotes)
 bytesMin = min(_bytes)
 bytesMax = max(_bytes)
-
 
 # injetar anomalias na quantidade indicada
 # (se colocar este for antes do for do minuteMap a injeção de anomalias fica mais espalhada)
@@ -195,36 +168,41 @@ bytesMax = max(_bytes)
 # (mas tem uma gambi bonita: pegar o mesmo horário que o logo antes ou depois da posição em que o dado será injetado)
 for am in range(0, amount):
     # caos, sk8 e destruição
-    for minute in minuteMap:
+    for i in range(0, minuteMapLen):
+        # recalcular o minuteMap toda vez pois a cada iteração
+        # os indexes correspondentes a cada novo intervalo mudam
+        minuteMap = minuteMapper(timeMap, interval)
+
+        if minuteMap[i] == 0:
+            continue
+
+        lastMinute = minuteMap[i-1]
+        currentMinute = minuteMap[i]
+
+        if minuteMap[i] == minuteMap[-1]:
+            lastMinute = minuteMap[i]
+            currentMinute = len(horario) - 1
 
         # inserir os dados
-        horario = insertValueInto(horario, minute, horario[minute])
-        ipOrigem = insertValueInto(ipOrigem, minute, generateIp())
-        portaOrigem = insertValueInto(portaOrigem, minute, generatePort())
-        ipDestino = insertValueInto(ipDestino, minute, generateIp())
-        portaDestino = insertValueInto(portaDestino, minute, generatePort())
+        chosenOne = generateRandomInt(lastMinute, currentMinute)
+        horario = insertValueInto(horario, chosenOne, horario[chosenOne])
+        ipOrigem = insertValueInto(ipOrigem, chosenOne, generateIp())
+        portaOrigem = insertValueInto(portaOrigem, chosenOne, generatePort())
+        ipDestino = insertValueInto(ipDestino, chosenOne, generateIp())
+        portaDestino = insertValueInto(portaDestino, chosenOne, generatePort())
         pacotes = pacotesResult = insertValueInto(
-            pacotes, minute, generatePacketsOrBytes(packetsMin, packetsMax))
+            pacotes, chosenOne, generateRandomInt(packetsMin, packetsMax))
         _bytes = insertValueInto(
-            _bytes, minute, generatePacketsOrBytes(bytesMin, bytesMax))
+            _bytes, chosenOne, generateRandomInt(bytesMin, bytesMax))
 
-        if minute == index[-1]:
-            horario.append(horario[-1])
-            ipOrigem.append(generateIp())
-            portaOrigem.append(generatePort())
-            ipDestino.append(generateIp())
-            portaDestino.append(generatePort())
-            pacotes.append(generatePacketsOrBytes(packetsMin, packetsMax))
-            _bytes.append(generatePacketsOrBytes(bytesMin, bytesMax))
 
-finalLen = len(horario)
-print(finalLen - originalLen)
 # write it all
 output = open('.test/test.csv', 'w')
 output.write(
     'index,horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
 for i in range(0, len(horario)):
+    # print('writing...')
     row = f'{i},{horario[i]},{ipOrigem[i]},{int(portaOrigem[i])},{ipDestino[i]},{int(portaDestino[i])},{int(pacotes[i])},{int(_bytes[i])}\n'
     output.write(row)
 
@@ -233,3 +211,12 @@ for i in range(0, len(horario)):
 output.close()
 
 print('finished!')
+
+path = '.test/test.csv'
+file = readFile(path)
+
+# read all the data
+index = readColumn(file, 'index')
+horario = readColumn(file, 'horario')
+timeMap = createDictionary(index, horario)
+print(minuteMapper(timeMap, interval))
