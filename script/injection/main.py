@@ -54,7 +54,7 @@ def minuteMapper(dictionary, interval):
 
 
 # ataques que serão implementados: DoS e DDoS
-# no DoS é utilizado apenas 1 IP e porta de origem para vários IPs e portas de destino
+# no DoS é utilizado apenas 1 IP e porta de origem (porta de origem é 1 só mesmo?) para vários IPs e portas de destino
 # no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
 
 # TODO: checar os IPs de destino presentes no arquivo e utilizar apenas estes valores
@@ -106,8 +106,14 @@ def reindexMinuteMap(minuteMap, amount):
 
     return data
 
-# =============================
 
+# tipos de ataque
+attacks = {
+    "dos": 0,
+    "ddos": 1
+}
+
+# vamos começar a bagaceira
 
 path = '.test/1.csv'
 file = readFile(path)
@@ -124,36 +130,29 @@ _bytes = readColumn(file, 'bytes')
 
 timeMap = createDictionary(index, horario)
 
+# TODO: injetar as anomalias apenas em 1 semana para fazer os testes
+# ========================================================================================================
+# = mapear a cada 30 minutos para encontrar fácil as horas e injetar anomalias em intervalos de horários =
+# ========================================================================================================
+
+# TODO: definir um intervalo de tempo para injetar a anomalia e injetar apenas neste intervalo N dados anômalos em intervalos de X minutos
 originalLen = len(horario)
-# =========================
-# =                       =
-# =========================
 
-# gerar e inserir apenas dados nos últimos momentos do minuto? No comecinho?
-# fica padronizado, mas isto apenas se realmente a ordem do timestamp importar neste caso
-# dá pra inserir no começo e no fim...
-
-# primeiro vamos fazer um teste para conseguir colocar 1 linha nova a cada 30 minutos
-# apenas no final do arquivo (time stamp sempre do final do momento)
-amount = 5
+# amount é a quantidade de dados a serem injetados por intervalo
+amount = 15
+# intervalo em minutos
 interval = 30
+# tipo de ataque
+attackType = attacks['dos']
 
 # calcular o mapeamento de index para horário de acordo com o intervalo definido
 minuteMap = minuteMapper(timeMap, interval)
 minuteMapLen = len(minuteMap)
-# adicionar o index do último instante do arquivo pois nele também deverão ser adicionados novos dados
-# minuteMap.append(index[-1])
-# na real não, o último index já diz qual que é o último minuto
 
 # bora calcular quais serão os novos intervalos após os dados serem injetados
 # afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
 reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
 
-# estou adicionando apenas nos últimos instantes do minuto
-# então não é necessário o primeiro item, que sempre será o primeiro instante dos arquivos
-# minuteMap.pop(0)
-# reindexedMinuteMap.pop(0)
-# porém mantendo este fica mais fácil de se alocar dados de maneira aleatória!
 
 # get the maximuns and minimuns necessary to keep some data quality
 packetsMin = min(pacotes)
@@ -161,20 +160,25 @@ packetsMax = max(pacotes)
 bytesMin = min(_bytes)
 bytesMax = max(_bytes)
 
+# DoS: mesmo IP de origem, mesmos IPs de destino, portas distintas
+# DDoS: vários IPs de origem, mesmos IPs de destino, mesma porta de origem para cada IP
+
+# gerar um IP e uma porta padrões para o caso do ataque ser do tipo DoS
+defaultIp = generateIp()
+defaultPort = generatePort()
+
 # injetar anomalias na quantidade indicada
-# (se colocar este for antes do for do minuteMap a injeção de anomalias fica mais espalhada)
-# (se deixar depois ele cola tudo junto no final dos minutos)
-# (mas aí fica foda pra setar O HORÁRIO...)
-# (mas tem uma gambi bonita: pegar o mesmo horário que o logo antes ou depois da posição em que o dado será injetado)
 for am in range(0, amount):
+    print(defaultIp)
+    print(defaultPort)
     # caos, sk8 e destruição
-    for i in range(0, minuteMapLen):
+    for i in range(1, minuteMapLen):
         # recalcular o minuteMap toda vez pois a cada iteração
         # os indexes correspondentes a cada novo intervalo mudam
         minuteMap = minuteMapper(timeMap, interval)
 
-        if minuteMap[i] == 0:
-            continue
+        # if minuteMap[i] == 0:
+        #     continue
 
         lastMinute = minuteMap[i-1]
         currentMinute = minuteMap[i]
@@ -183,13 +187,25 @@ for am in range(0, amount):
             lastMinute = minuteMap[i]
             currentMinute = len(horario) - 1
 
-        # inserir os dados
+        # ========================================================
+        # = inserir dados em posiçoes aleatórias                 =
+        # = porém dentro dos intervalos definidos pelo minuteMap =
+        # ========================================================
+        # TOTHINK: inserir respostas das requisições?
+        # nos dados fica nítido que há um padrão em que há um request e então a rede envia um response
+        # isto pois o IP origem de uma linha se torna o IP de destino da linha seguinte e vice-versa
         chosenOne = generateRandomInt(lastMinute, currentMinute)
         horario = insertValueInto(horario, chosenOne, horario[chosenOne])
-        ipOrigem = insertValueInto(ipOrigem, chosenOne, generateIp())
-        portaOrigem = insertValueInto(portaOrigem, chosenOne, generatePort())
-        ipDestino = insertValueInto(ipDestino, chosenOne, generateIp())
+        # ternário é estranho em Python
+        ipOrigem = insertValueInto(ipOrigem, chosenOne, generateIp(
+        )) if attackType == attacks['ddos'] else insertValueInto(ipOrigem, chosenOne, defaultIp)
+        portaOrigem = insertValueInto(portaOrigem, chosenOne, generatePort(
+        )) if attackType == attacks['ddos'] else insertValueInto(portaOrigem, chosenOne, defaultPort)
+        # pega um IP de destino já presente nos dados para que o destino seja realmente um endereço da rede
+        ipDestino = insertValueInto(
+            ipDestino, chosenOne, ipDestino[generateRandomInt(0, len(ipDestino) - 1)])
         portaDestino = insertValueInto(portaDestino, chosenOne, generatePort())
+
         pacotes = pacotesResult = insertValueInto(
             pacotes, chosenOne, generateRandomInt(packetsMin, packetsMax))
         _bytes = insertValueInto(
