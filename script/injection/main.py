@@ -53,6 +53,14 @@ def minuteMapper(dictionary, interval):
     return intervalIndexes
 
 
+def minuteMapToHour(minuteMap):
+    hourMap = []
+    for i in range(0, len(minuteMap) - 1):
+        if i % 2 == 0:
+            hourMap.append(minuteMap[i])
+    return hourMap
+
+
 # ataques que serão implementados: DoS e DDoS
 # no DoS é utilizado apenas 1 IP e porta de origem (porta de origem é 1 só mesmo?) para vários IPs e portas de destino
 # no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
@@ -113,6 +121,8 @@ attacks = {
     "ddos": 1
 }
 
+interval = 30
+
 # vamos começar a bagaceira
 
 path = '.test/1.csv'
@@ -140,18 +150,24 @@ originalLen = len(horario)
 
 # amount é a quantidade de dados a serem injetados por intervalo
 amount = 15
-# intervalo em minutos
-interval = 30
+# horário de início dos ataques e horário de término dos ataques, respectivamente
+# no sistema de horário 24h
+# ex: `start = 8; stop = 10` injetará anomalias entre as 8 da manhã e as 10 da manhã
+start = 8
+stop = 10
 # tipo de ataque
 attackType = attacks['dos']
 
-# calcular o mapeamento de index para horário de acordo com o intervalo definido
+# fazendo o minute map para intervalos de 30 minutos fica fácil detectar os horários, por isto interval = 30
 minuteMap = minuteMapper(timeMap, interval)
+print(minuteMap)
+hourMap = minuteMapToHour(minuteMap)
+print(hourMap)
 minuteMapLen = len(minuteMap)
 
-# bora calcular quais serão os novos intervalos após os dados serem injetados
-# afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
-reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
+# # bora calcular quais serão os novos intervalos após os dados serem injetados
+# # afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
+# reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
 
 
 # get the maximuns and minimuns necessary to keep some data quality
@@ -191,9 +207,6 @@ for am in range(0, amount):
         # = inserir dados em posiçoes aleatórias                 =
         # = porém dentro dos intervalos definidos pelo minuteMap =
         # ========================================================
-        # TOTHINK: inserir respostas das requisições?
-        # nos dados fica nítido que há um padrão em que há um request e então a rede envia um response
-        # isto pois o IP origem de uma linha se torna o IP de destino da linha seguinte e vice-versa
         chosenOne = generateRandomInt(lastMinute, currentMinute)
         horario = insertValueInto(horario, chosenOne, horario[chosenOne])
         # ternário é estranho em Python
