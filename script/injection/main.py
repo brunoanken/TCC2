@@ -53,12 +53,30 @@ def minuteMapper(dictionary, interval):
     return intervalIndexes
 
 
-def minuteMapToHour(minuteMap):
+def minuteMapToHourMap(minuteMap):
     hourMap = []
     for i in range(0, len(minuteMap) - 1):
         if i % 2 == 0:
             hourMap.append(minuteMap[i])
     return hourMap
+
+
+# índex 0 = meia-noite; index 1 = 1h da manhã; index 2 = 2h da manhã e por aí vai
+# não deve-se passar 0h ou 24h como parâmetro para `finish`
+def hourIntervalMap(hourMap, start, finish, lastIndex):
+    if (finish <= start):
+        raise Exception(
+            "valor do horário de fim do intervalo superior ou igual ao valor do horário de início")
+
+    intervalMap = []
+    intervalMap.append(hourMap[start])
+
+    if finish == 24:
+        intervalMap.append(hourMap[lastIndex])
+    else:
+        intervalMap.append(hourMap[finish])
+
+    return intervalMap
 
 
 # ataques que serão implementados: DoS e DDoS
@@ -70,6 +88,7 @@ def minuteMapToHour(minuteMap):
 # ========================================
 # data generation functions              =
 # ========================================
+
 
 def insertValueInto(data, position, value):
     prePosition = sliceList(data, 0, position)
@@ -83,6 +102,7 @@ def generateIp():
     _max = int(255)
 
     random.seed()
+    print("GENERATEIP SENDO CHAMADO")
 
     return f'{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}.{random.randint(_min, _max)}'
 
@@ -92,6 +112,7 @@ def generatePort():
     _max = int(65535)
 
     random.seed()
+    print("GENERATEPORT SENDO CHAMADO")
 
     return random.randint(_min, _max)
 
@@ -102,25 +123,13 @@ def generateRandomInt(_min, _max):
     return random.randint(_min, _max)
 
 
-# ==========================
-# = other helper functions =
-# ==========================
-
-
-def reindexMinuteMap(minuteMap, amount):
-    data = []
-    for i in range(0, len(minuteMap)):
-        data.append(minuteMap[i] + (i * amount))
-
-    return data
-
-
 # tipos de ataque
 attacks = {
     "dos": 0,
     "ddos": 1
 }
 
+# contando de meia em meia hora fica fácil de achar os índices dos horários (meia-noite, 1h, 2h, 3h etc.)
 interval = 30
 
 # vamos começar a bagaceira
@@ -138,18 +147,16 @@ portaDestino = readColumn(file, 'porta_destino')
 pacotes = readColumn(file, 'pacotes')
 _bytes = readColumn(file, 'bytes')
 
-timeMap = createDictionary(index, horario)
 
 # TODO: injetar as anomalias apenas em 1 semana para fazer os testes
 # ========================================================================================================
 # = mapear a cada 30 minutos para encontrar fácil as horas e injetar anomalias em intervalos de horários =
 # ========================================================================================================
 
-# TODO: definir um intervalo de tempo para injetar a anomalia e injetar apenas neste intervalo N dados anômalos em intervalos de X minutos
-originalLen = len(horario)
+# TODO: injetar N dados anômalos em intervalos de X minutos no intervalo escolhido???? ou só injetar loucamente sem periodicidade??????
 
 # amount é a quantidade de dados a serem injetados por intervalo
-amount = 15
+amount = 5000
 # horário de início dos ataques e horário de término dos ataques, respectivamente
 # no sistema de horário 24h
 # ex: `start = 8; stop = 10` injetará anomalias entre as 8 da manhã e as 10 da manhã
@@ -158,23 +165,23 @@ stop = 10
 # tipo de ataque
 attackType = attacks['dos']
 
-# fazendo o minute map para intervalos de 30 minutos fica fácil detectar os horários, por isto interval = 30
-minuteMap = minuteMapper(timeMap, interval)
-print(minuteMap)
-hourMap = minuteMapToHour(minuteMap)
-print(hourMap)
-minuteMapLen = len(minuteMap)
-
-# # bora calcular quais serão os novos intervalos após os dados serem injetados
-# # afinal adicionar novos dados vai modificar os índices que correspondem ao início dos intervalos
-# reindexedMinuteMap = reindexMinuteMap(minuteMap, amount)
-
 
 # get the maximuns and minimuns necessary to keep some data quality
 packetsMin = min(pacotes)
 packetsMax = max(pacotes)
 bytesMin = min(_bytes)
 bytesMax = max(_bytes)
+
+# estrutura inicial necessária para rodar direito os cript
+# cria o timeMap pra criar o minuteMap para criar o hourMap
+# o hourMap é o mapeamento em que cada valor da lista representa o índex em que determinado horário inicia
+# (o horário é no formato de 24h)
+# o intervalMap retorna sempre uma lista com 2 valores onde o primeiro é o índex do início do intervalo (por exemplo 8h da manhã)
+# o segundo valor é o índex do final do intervalo (por exemplo 10h da manhã)
+timeMap = createDictionary(index, horario)
+minuteMap = minuteMapper(timeMap, interval)
+hourMap = minuteMapToHourMap(minuteMap)
+intervalMap = hourIntervalMap(hourMap, start, stop, len(horario) - 1)
 
 # DoS: mesmo IP de origem, mesmos IPs de destino, portas distintas
 # DDoS: vários IPs de origem, mesmos IPs de destino, mesma porta de origem para cada IP
@@ -183,46 +190,39 @@ bytesMax = max(_bytes)
 defaultIp = generateIp()
 defaultPort = generatePort()
 
-# injetar anomalias na quantidade indicada
+# injetar anomalias na quantidade indicada dentro do intervalo indicado
 for am in range(0, amount):
-    print(defaultIp)
-    print(defaultPort)
+    print("")
+    print(am)
+    print("")
     # caos, sk8 e destruição
-    for i in range(1, minuteMapLen):
-        # recalcular o minuteMap toda vez pois a cada iteração
-        # os indexes correspondentes a cada novo intervalo mudam
-        minuteMap = minuteMapper(timeMap, interval)
+    # ========================================================
+    # = inserir dados em posiçoes aleatórias                 =
+    # = porém dentro dos intervalos definidos pelo minuteMap =
+    # ========================================================
+    chosenOne = generateRandomInt(intervalMap[0], intervalMap[-1])
+    print("chosenOne")
+    print(chosenOne)
 
-        # if minuteMap[i] == 0:
-        #     continue
+    # ternário é estranho em Python
+    ipOrigem = insertValueInto(ipOrigem, chosenOne, generateIp(
+    )) if attackType == attacks['ddos'] else insertValueInto(ipOrigem, chosenOne, defaultIp)
+    portaOrigem = insertValueInto(portaOrigem, chosenOne, generatePort(
+    )) if attackType == attacks['ddos'] else insertValueInto(portaOrigem, chosenOne, defaultPort)
+    # pega um IP de destino já presente nos dados para que o destino seja realmente um endereço da rede
+    ipDestino = insertValueInto(
+        ipDestino, chosenOne, ipDestino[generateRandomInt(0, len(ipDestino) - 1)])
+    portaDestino = insertValueInto(portaDestino, chosenOne, generatePort())
 
-        lastMinute = minuteMap[i-1]
-        currentMinute = minuteMap[i]
+    pacotes = pacotesResult = insertValueInto(
+        pacotes, chosenOne, generateRandomInt(packetsMin, packetsMax))
+    _bytes = insertValueInto(
+        _bytes, chosenOne, generateRandomInt(bytesMin, bytesMax))
 
-        if minuteMap[i] == minuteMap[-1]:
-            lastMinute = minuteMap[i]
-            currentMinute = len(horario) - 1
-
-        # ========================================================
-        # = inserir dados em posiçoes aleatórias                 =
-        # = porém dentro dos intervalos definidos pelo minuteMap =
-        # ========================================================
-        chosenOne = generateRandomInt(lastMinute, currentMinute)
-        horario = insertValueInto(horario, chosenOne, horario[chosenOne])
-        # ternário é estranho em Python
-        ipOrigem = insertValueInto(ipOrigem, chosenOne, generateIp(
-        )) if attackType == attacks['ddos'] else insertValueInto(ipOrigem, chosenOne, defaultIp)
-        portaOrigem = insertValueInto(portaOrigem, chosenOne, generatePort(
-        )) if attackType == attacks['ddos'] else insertValueInto(portaOrigem, chosenOne, defaultPort)
-        # pega um IP de destino já presente nos dados para que o destino seja realmente um endereço da rede
-        ipDestino = insertValueInto(
-            ipDestino, chosenOne, ipDestino[generateRandomInt(0, len(ipDestino) - 1)])
-        portaDestino = insertValueInto(portaDestino, chosenOne, generatePort())
-
-        pacotes = pacotesResult = insertValueInto(
-            pacotes, chosenOne, generateRandomInt(packetsMin, packetsMax))
-        _bytes = insertValueInto(
-            _bytes, chosenOne, generateRandomInt(bytesMin, bytesMax))
+    # ao final de cada operação mais um valor foi injetado nos dados
+    # portanto o índex do intervalo presente no intervalMap muda
+    # é só adicionar 1 ao valor final que tá tudo celto
+    intervalMap[-1] += 1
 
 
 # write it all
@@ -239,13 +239,5 @@ for i in range(0, len(horario)):
 # bora limpar a sujeira
 output.close()
 
-print('finished!')
-
-path = '.test/test.csv'
-file = readFile(path)
-
-# read all the data
-index = readColumn(file, 'index')
-horario = readColumn(file, 'horario')
-timeMap = createDictionary(index, horario)
-print(minuteMapper(timeMap, interval))
+print("")
+print('FINISHED!')
