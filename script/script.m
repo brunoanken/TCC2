@@ -137,7 +137,7 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,2),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(["Entropia da porta de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)])
+            title(strcat("Entropia da porta de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
             xlabel(["Intervalos de ", num2str(M), " minutos"])
             ylabel("Entropia")
             legend(f2Legends, "Location", "southwest")
@@ -151,7 +151,7 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,3),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(["Entropia do IP de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)])
+            title(strcat("Entropia do IP de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
             xlabel(["Intervalos de ", num2str(M), " minutos"])
             ylabel("Entropia")
             legend(f3Legends, "Location", "southwest")
@@ -165,7 +165,7 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,4),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(["Entropia da porta de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)])
+            title(strcat("Entropia da porta de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
             xlabel(["Intervalos de ", num2str(M), " minutos"])
             ylabel("Entropia")
             legend(f4Legends, "Location", "southwest")
@@ -179,7 +179,7 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,5),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(["Média de pacotes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)])
+            title(strcat("Média de pacotes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
             xlabel(["Intervalos de ", num2str(M), " minutos"])
             ylabel("Média de pacotes por segundo")
             legend(f5Legends, "Location", "southwest")
@@ -193,7 +193,7 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,6),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(["Média de bytes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)])
+            title(strcat("Média de bytes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
             xlabel(["Intervalos de ", num2str(M), " minutos"])
             ylabel("Média de bytes por segundo")
             legend(f6Legends, "Location", "southwest")
