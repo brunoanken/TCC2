@@ -117,60 +117,60 @@ for M = 1:5
             mkdir(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D)))
             % Plot 1 Entropia IP de Origem
             f1 = figure(1);
-            clf('reset')
+            clf('reset');
             f1Legends = {"Entropia na primeira semana", "Baseline"};
-            plot(1:size(M1, 1),Dados(1,:,1),'--r')
+            plot(1:size(M1, 1),Dados(1,:,1),'--r');
             hold on
             plot(1:size(M1, 1),Baseline(:,1),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(strcat("Entropia do IP de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
-            xlabel(["Intervalos de ", num2str(M), " minutos"])
-            ylabel("Entropia")
-            legend(f1Legends, "Location", "southwest")
-            saveas(f1, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.jpg"))
-
+            title(strcat("Entropia do IP de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)));
+            xlabel(["Intervalos de ", num2str(M), " minutos"]);
+            ylabel("Entropia");
+            legend(f1Legends, "Location", "southwest");
+            saveas(f1, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.jpg"));
+            savefig(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.fig"));
             % Plot 2 Entropia Porta de Origem
             f2 = figure(2);
             clf('reset')
             f2Legends = {"Entropia na primeira semana", "Baseline"};
-            plot(1:size(M1, 1),Dados(1,:,2),'--r')
+            plot(1:size(M1, 1),Dados(1,:,2),'--r');
             hold on
             plot(1:size(M1, 1),Baseline(:,2),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(strcat("Entropia da porta de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
-            xlabel(["Intervalos de ", num2str(M), " minutos"])
-            ylabel("Entropia")
-            legend(f2Legends, "Location", "southwest")
-            saveas(f2, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portaorigem.jpg"))
-
+            title(strcat("Entropia da porta de origem no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)));
+            xlabel(["Intervalos de ", num2str(M), " minutos"]);
+            ylabel("Entropia");
+            legend(f2Legends, "Location", "southwest");
+            saveas(f2, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portaorigem.jpg"));
+            savefig(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portaorigem.fig"));
             % Plot 3 Entropia IP de Destino
             f3 = figure(3);
-            clf('reset')
+            clf('reset');
             f3Legends = {"Entropia na primeira semana", "Baseline"};
-            plot(1:size(M1, 1),Dados(1,:,3),'--r')
+            plot(1:size(M1, 1),Dados(1,:,3),'--r');
             hold on
             plot(1:size(M1, 1),Baseline(:,3),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(strcat("Entropia do IP de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
-            xlabel(["Intervalos de ", num2str(M), " minutos"])
-            ylabel("Entropia")
-            legend(f3Legends, "Location", "southwest")
-            saveas(f3, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/ipdestino.jpg"))
-
+            title(strcat("Entropia do IP de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)));
+            xlabel(["Intervalos de ", num2str(M), " minutos"]);
+            ylabel("Entropia");
+            legend(f3Legends, "Location", "southwest");
+            saveas(f3, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/ipdestino.jpg"));
+            savefig(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/ipdestino.fig"));
             % Plot 4 Entropia Porta de Destino
             f4 = figure(4);
             clf('reset')
             f4Legends = {"Entropia na primeira semana", "Baseline"};
-            plot(1:size(M1, 1),Dados(1,:,4),'--r')
+            plot(1:size(M1, 1),Dados(1,:,4),'--r');
             hold on
             plot(1:size(M1, 1),Baseline(:,4),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(strcat("Entropia da porta de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
-            xlabel(["Intervalos de ", num2str(M), " minutos"])
-            ylabel("Entropia")
-            legend(f4Legends, "Location", "southwest")
-            saveas(f4, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portadestino.jpg"))
-
+            title(strcat("Entropia da porta de destino no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)));
+            xlabel(["Intervalos de ", num2str(M), " minutos"]);
+            ylabel("Entropia");
+            legend(f4Legends, "Location", "southwest");
+            saveas(f4, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portadestino.jpg"));
+            savefig(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/portadestino.fig"));
             % Plot 5 Pacotes por Segundo
             f5 = figure(5);
             clf('reset')
@@ -179,12 +179,12 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,5),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(strcat("Média de pacotes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
-            xlabel(["Intervalos de ", num2str(M), " minutos"])
-            ylabel("Média de pacotes por segundo")
-            legend(f5Legends, "Location", "southwest")
-            saveas(f5, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/pacotesps.jpg"))
-
+            title(strcat("Média de pacotes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)));
+            xlabel(["Intervalos de ", num2str(M), " minutos"]);
+            ylabel("Média de pacotes por segundo");
+            legend(f5Legends, "Location", "southwest");
+            saveas(f5, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/pacotesps.jpg"));
+            savefig(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/pacotesps.fig"));
             % Plot 6 Bytes por Segundo
             f6 = figure(6);
             clf('reset')
@@ -193,11 +193,12 @@ for M = 1:5
             hold on
             plot(1:size(M1, 1),Baseline(:,6),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
-            title(strcat("Média de bytes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)))
-            xlabel(["Intervalos de ", num2str(M), " minutos"])
-            ylabel("Média de bytes por segundo")
-            legend(f6Legends, "Location", "southwest")
-            saveas(f6, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.jpg"))
+            title(strcat("Média de bytes por segundo no intervalo de ", num2str(S), "semanas a cada ", num2str(M), "minutos", "no dia", num2str(D)));
+            xlabel(["Intervalos de ", num2str(M), " minutos"]);
+            ylabel("Média de bytes por segundo");
+            legend(f6Legends, "Location", "southwest");
+            saveas(f6, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.jpg"));
+            savefig(strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.fig"));
         end
     end
 end
