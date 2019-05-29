@@ -172,7 +172,7 @@ for day in weeks[0]:
     # TODO: injetar N dados anômalos em intervalos de X minutos no intervalo escolhido???? ou só injetar loucamente sem periodicidade??????
 
     # amount é a quantidade de dados a serem injetados por intervalo
-    amount = 5
+    amount = 10000
     # horário de início dos ataques e horário de término dos ataques, respectivamente
     # no sistema de horário 24h
     # ex: `start = 8; stop = 10` injetará anomalias entre as 8 da manhã e as 10 da manhã
@@ -205,14 +205,8 @@ for day in weeks[0]:
     defaultIp = generateIp()
     defaultPort = generatePort()
 
-    print("len before")
-    print(len(horario))
     # injetar anomalias na quantidade indicada dentro do intervalo indicado
     for am in range(0, amount):
-        print("")
-        print("am")
-        print(am)
-        print("")
         # caos, sk8 e destruição
         # ========================================================
         # = inserir dados em posiçoes aleatórias                 =
@@ -245,8 +239,6 @@ for day in weeks[0]:
     output.write(
         'index,horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
-    print("len after")
-    print(len(horario))
     for i in range(0, len(horario)):
         # print('writing...')
         row = f'{i},{horario[i]},{ipOrigem[i]},{int(portaOrigem[i])},{ipDestino[i]},{int(portaDestino[i])},{int(pacotes[i])},{int(_bytes[i])}\n'
@@ -255,6 +247,5 @@ for day in weeks[0]:
     # bora limpar a sujeira
     output.close()
 
-    print("")
     print(
         f'escrita do arquivo ../../dados_anomalos/{day}.csv completada com sucesso')
