@@ -86,8 +86,6 @@ def hourIntervalMap(hourMap, start, finish, lastIndex):
 # no DoS é utilizado apenas 1 IP e porta de origem (porta de origem é 1 só mesmo?) para vários IPs e portas de destino
 # no DDoS são vários IPs e portas de origem para vários IPs e portas de destino
 
-# TODO: checar os IPs de destino presentes no arquivo e utilizar apenas estes valores
-
 # ========================================
 # data generation functions              =
 # ========================================
@@ -139,8 +137,6 @@ weeks = [
     [29, 30, 31]
 ]
 
-print(weeks)
-
 # vamos começar a bagaceira
 if not os.path.isdir('../../dados_anomalos/'):
     os.makedirs('../../dados_anomalos/')
@@ -164,15 +160,12 @@ for day in weeks[0]:
     pacotes = readColumn(file, 'pacotes')
     _bytes = readColumn(file, 'bytes')
 
-    # TODO: injetar as anomalias apenas em 1 semana para fazer os testes
     # ========================================================================================================
     # = mapear a cada 30 minutos para encontrar fácil as horas e injetar anomalias em intervalos de horários =
     # ========================================================================================================
 
-    # TODO: injetar N dados anômalos em intervalos de X minutos no intervalo escolhido???? ou só injetar loucamente sem periodicidade??????
-
     # amount é a quantidade de dados a serem injetados por intervalo
-    amount = 10000
+    amount = 2000
     # horário de início dos ataques e horário de término dos ataques, respectivamente
     # no sistema de horário 24h
     # ex: `start = 8; stop = 10` injetará anomalias entre as 8 da manhã e as 10 da manhã
