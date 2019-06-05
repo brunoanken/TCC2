@@ -2,18 +2,13 @@ import os
 import subprocess
 import sys
 
-# DEFINA O DIA QUE VOCE DESEJA INICIAR O PROCESSAMENTO
 diaInicio = 1
 
-# DEFINA O ÚLTIMO DIA A SER PROCESSADO (na realidade é o último dia + 1)
 diaTermino = 32
 
-# arquivo para logar os erros
 errorFile = open('nfdump_to_csv_errors.txt', 'w+')
 
-# coloque o endereço do diretório onde se encontram os dados
 os.chdir("../dados_rede/data")
-# diretório para guardar os dados em formato CSV
 if not os.path.isdir('csv_data'):
     os.makedirs('csv_data')
 
@@ -48,9 +43,7 @@ for dia in range(diaInicio, diaTermino):
                     if st[0] == 'Summary:' or st[0] == 'Time' or st[0] == 'Total':
                         break
                     horario = st[1].split('.')
-                    # Hora da marretada
-                    # O numero de espacos entre o Protocolo e o endereco de origem e variavel #fodeu
-                    # Workaround Time
+
                     if st[3] != 'TCP' and st[3] != 'UDP' and st[3] != 'ICMP' and st[3] != 'ICMP6' and st[3] != 'IPv6' and st[3] != 'GRE':
                         index = 4
                         while st[index] != 'TCP' and st[index] != 'UDP' and st[index] != 'ICMP' and st[index] != 'ICMP6' and st[index] != 'IPv6' and st[index] != 'GRE':
@@ -62,7 +55,6 @@ for dia in range(diaInicio, diaTermino):
                         index = 4
                     while st[index] == '' or st[index] == '->':
                         index += 1
-                    # Invocando o Deus da Gambi para Tratar Endereços IPv6
                     origem = st[index]
                     o_splitted = origem.split(':')
                     if len(o_splitted) > 2:
@@ -98,13 +90,11 @@ for dia in range(diaInicio, diaTermino):
                     while st[index] == '' or st[index] == '->':
                         index += 1
                     bytes = st[index]
-                    # sys.stdout.write("x\n")
                     file.write("%s,%s,%s,%s,%s,%s,%s\n" % (
                         horario[0], ip_origem, porta_origem, ip_destino, porta_destino, pacotes, bytes))
         except:
             print(f'ERRO NO ARQUIVO {arquivo}')
             print(sys.exc_info()[0])
-            # TODO escrever os erros em outro arquivo para averiguar os mesmos
         c_minutos += 5
         if c_minutos == 60:
             c_minutos = 0
@@ -112,7 +102,6 @@ for dia in range(diaInicio, diaTermino):
 
     file.close()
 
-    # Ordenando o arquivo
     cabecalho = ''
     finalFileName = f'csv_data/{dia}.csv'
     output = open(finalFileName, 'w+')
