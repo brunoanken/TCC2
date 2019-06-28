@@ -2,20 +2,27 @@ import pandas as pd
 import os
 import subprocess
 
-columnNames = ['ip_origem', 'porta_origem', 'ip_destino',
-               'porta_destino', 'pacotes_ps', 'bytes_ps']
+column_names = ['ip_origem', 'porta_origem', 'ip_destino',
+                'porta_destino', 'pacotes_ps', 'bytes_ps']
 
 
-def readFile(filePath):
-    f = open(filePath, 'r')
+def baseline_file_name(minute, week, day):
+    return f'../../dados_rede/data/baseline/minuto{minute}/intervalo_semana{week}/dia{day}/baseline.csv'
+
+
+def error_file_name(minute, week, day):
+    return f'../../dados_conclusoes/erros/minuto{minute}/intervalo_semana{week}/dia{day}/erro.csv'
+
+
+def read_file(file_path):
+    f = open(file_path, 'r')
     return pd.read_csv(f)
 
 
-def readFileWithoutHeader(filePath):
-    f = open(filePath, 'r')
-    return pd.read_csv(f, names=columnNames)
+def read_headerless_file(file_path):
+    f = open(file_path, 'r')
+    return pd.read_csv(f, names=column_names)
 
 
-file = readFileWithoutHeader(
-    '../../dados_rede/data/baseline/minuto1/intervalo_semana2/dia1/baseline.csv')
+file = read_headerless_file(baseline_file_name(1, 2, 1))
 print(file)
