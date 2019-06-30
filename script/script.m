@@ -109,6 +109,14 @@ for M = 1:5
                  end
 
             end
+            
+            sizeBas = size(Baseline);
+            sizeFigX = sizeBas(1);
+            
+            % salvar os dados do baseline para análises posteriores
+            mkdir(strcat("../dados_rede/data/baseline/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D)))
+            csvwrite(strcat("../dados_rede/data/baseline/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/baseline.csv"), Baseline)
+            
 
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % Plotando
@@ -120,11 +128,12 @@ for M = 1:5
             clf('reset');
             f1Legends = {"Entropia na primeira semana", "Baseline"};
             plot(1:size(M1, 1),Dados(1,:,1),'--r');
+            xlim ([0 sizeFigX]);
             hold on
             plot(1:size(M1, 1),Baseline(:,1),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
             title(strcat("Entropia do IP de origem no intervalo de ", num2str(S), " semanas a cada ", num2str(M), " minutos", " no dia ", num2str(D)));
-            xlabel(strcat("Intervalos de ", num2str(M), " minutos");
+            xlabel(strcat("Intervalos de ", num2str(M), " minutos"));
             ylabel("Entropia");
             legend(f1Legends, "Location", "southwest");
             saveas(f1, strcat("../imagens/dados_originais/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.jpg"));
@@ -134,6 +143,7 @@ for M = 1:5
             clf('reset')
             f2Legends = {"Entropia na primeira semana", "Baseline"};
             plot(1:size(M1, 1),Dados(1,:,2),'--r');
+            xlim ([0 sizeFigX]);
             hold on
             plot(1:size(M1, 1),Baseline(:,2),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
@@ -148,6 +158,7 @@ for M = 1:5
             clf('reset');
             f3Legends = {"Entropia na primeira semana", "Baseline"};
             plot(1:size(M1, 1),Dados(1,:,3),'--r');
+            xlim ([0 sizeFigX]);
             hold on
             plot(1:size(M1, 1),Baseline(:,3),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
@@ -162,6 +173,7 @@ for M = 1:5
             clf('reset')
             f4Legends = {"Entropia na primeira semana", "Baseline"};
             plot(1:size(M1, 1),Dados(1,:,4),'--r');
+            xlim ([0 sizeFigX]);
             hold on
             plot(1:size(M1, 1),Baseline(:,4),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
@@ -176,6 +188,7 @@ for M = 1:5
             clf('reset')
             f5Legends = {"Entropia na primeira semana", "Baseline"};
             plot(1:size(M1, 1),Dados(1,:,5),'--r');
+            xlim ([0 sizeFigX]);
             hold on
             plot(1:size(M1, 1),Baseline(:,5),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);
@@ -190,6 +203,7 @@ for M = 1:5
             clf('reset')
             f6Legends = {"Entropia na primeira semana", "Baseline"};
             plot(1:size(M1, 1),Dados(1,:,6),'--r');
+            xlim ([0 sizeFigX]);
             hold on
             plot(1:size(M1, 1),Baseline(:,6),'-k');
             set(gcf, 'units', 'points', 'position', [10, 10, 1600, 1200]);

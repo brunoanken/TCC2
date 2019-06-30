@@ -118,8 +118,11 @@ weeks = [
     [29, 30, 31]
 ]
 
-if not os.path.isdir('../../dados_anomalos/'):
-    os.makedirs('../../dados_anomalos/')
+if not os.path.isdir('../../dados_anomalos/dos'):
+    os.makedirs('../../dados_anomalos/dos')
+
+if not os.path.isdir('../../dados_anomalos/ddos'):
+    os.makedirs('../../dados_anomalos/ddos')
 
 for day in weeks[0]:
 
@@ -138,10 +141,10 @@ for day in weeks[0]:
     pacotes = readColumn(file, 'pacotes')
     _bytes = readColumn(file, 'bytes')
 
-    amount = 2000
+    amount = 2500
     start = 8
     stop = 10
-    attackType = attacks['dos']
+    attackType = attacks['ddos']
 
     packetsMin = min(pacotes)
     packetsMax = max(pacotes)
@@ -157,6 +160,7 @@ for day in weeks[0]:
     defaultPort = generatePort()
 
     for am in range(0, amount):
+        print(am)
         chosenOne = generateRandomInt(intervalMap[0], intervalMap[-1])
 
         horario = insertValueInto(horario, chosenOne, horario[chosenOne])
@@ -174,7 +178,8 @@ for day in weeks[0]:
 
         intervalMap[-1] += 1
 
-    output = open(f'../../dados_anomalos/{day}.csv', 'w+')
+    typeToSave = "ddos" if attackType == attacks['ddos'] else "dos"
+    output = open(f'../../dados_anomalos/{typeToSave}/{day}.csv', 'w+')
     output.write(
         'index,horario,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
