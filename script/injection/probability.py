@@ -82,8 +82,15 @@ def entroPy(data):
     return entropy
 
 
+attacks = {
+    "dos": "dos",
+    "ddos": "ddos"
+}
+
+attackType = attacks['ddos']
+
 for day in range(1, 8):
-    file = f'../../dados_anomalos/{day}.csv'
+    file = f'../../dados_anomalos/{attackType}/{day}.csv'
 
     key = readColumn(file, 'index')
     value = readColumn(file, 'horario')
@@ -158,7 +165,12 @@ for day in range(1, 8):
                 elif(column == 'bytes_ps'):
                     results_bytes_ps.append(res / (60 * minute))
 
-        output = open(f'../../dados_anomalos/entropy/{minute}/{day}.csv', 'w')
+        if not os.path.isdir(f'../../dados_anomalos/entropy/{attackType}/{minute}'):
+            os.makedirs(
+                f'../../dados_anomalos/entropy/{attackType}/{minute}')
+
+        output = open(
+            f'../../dados_anomalos/entropy/{attackType}/{minute}/{day}.csv', 'w')
         output.write(
             'index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
@@ -170,5 +182,6 @@ for day in range(1, 8):
 
             output.write(line)
 
-        print(f'arquivo dia {day} minuto {minute} completo')
+        print(
+            f'arquivo dia {day} minuto {minute} ataque tipo {attackType} completado')
         output.close()
