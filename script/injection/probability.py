@@ -87,7 +87,7 @@ attacks = {
     "ddos": "ddos"
 }
 
-attackType = attacks['ddos']
+attackType = attacks['dos']
 
 for day in range(1, 8):
     file = f'../../dados_anomalos/{attackType}/{day}.csv'

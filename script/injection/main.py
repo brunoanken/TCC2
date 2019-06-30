@@ -141,10 +141,10 @@ for day in weeks[0]:
     pacotes = readColumn(file, 'pacotes')
     _bytes = readColumn(file, 'bytes')
 
-    amount = 2500
+    amount = 1000
     start = 8
     stop = 10
-    attackType = attacks['ddos']
+    attackType = attacks['dos']
 
     packetsMin = min(pacotes)
     packetsMax = max(pacotes)

@@ -17,7 +17,7 @@ for M = 1:5
             plot(1:size(anomalies, 1), anomalies(:,1), '--b');
             legend(legends, "Location", "southwest");
             saveas(f1, strcat("../imagens/dados_anomalos/", attack, "/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.jpg"));
-            savefig(strcat("../imagens/dados_anomalos/", attack, "/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.fig"));
+            savefig(strcat("../imagens/dados_anomalos/", attack, "/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/iporigem.fig"))
             close()
             %             Porta de Origem
             legends = {"Entropia na primeira semana", "Baseline", "Entropia do dia com anomalias"};
@@ -77,7 +77,6 @@ for M = 1:5
             plot(1:size(anomalies, 1), anomalies(:,6), '--b');
             legend(legends, "Location", "southwest");
             saveas(f6, strcat("../imagens/dados_anomalos/", attack, "/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.jpg"));
-            savefig(strcat("../imagens/dados_anomalos/", attack, "/minuto", num2str(M),"/intervalo_semana", num2str(S), "/dia", num2str(D), "/bytesps.fig"))
             close()
         end
     end
