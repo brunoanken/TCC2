@@ -88,7 +88,6 @@ for minute_interval in range(1, 6):
                             data_entropy[item], data_baseline[item])
 
                     average_errors[column] = square_error_accumulator / data_len
-                # print("edmar" + "cockmar")
                 output_path = error_folder_name(
                     minute_interval, week_interval, day_to_read)
                 if not os.path.isdir(output_path):
