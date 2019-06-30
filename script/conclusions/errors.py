@@ -7,9 +7,6 @@ column_names = ['ip_origem', 'porta_origem', 'ip_destino',
                 'porta_destino', 'pacotes_ps', 'bytes_ps']
 
 
-# weeks_starting_days = [1, 8, 15, 22]
-
-
 def entropy_file_name(minute, day):
     return f'../../dados_rede/data/entropy/{minute}/{day}.csv'
 
@@ -45,21 +42,6 @@ def calculate_square_error(real_value, baseline_value):
     square_error = pow(difference, 2)
     return square_error
 
-# entropy => por intervalo de minuto (1, 2, 3, 4 e 5) para cada dia do mês
-
-# baseline => por intervalo de minuto (1, 2, 3, 4 e 5) para intervalos de semana (2, 3 e 4)
-# para cada dia da semana (1, 2, 3, 4, 5, 6 e 7)
-
-###########################
-# comparações necessárias #
-###########################
-
-# entropy => cada intervalo de minuto => cada dia DO MÊS =>
-# => seu correspondente (baseline) de intervalo de minuto para TODOS os intervalos de semana =>
-# => a seu correspondente dia de semana (1, 2, 3, 4, 5, 6 ou 7)
-
-
-count = 1
 
 for minute_interval in range(1, 6):
 
@@ -95,7 +77,7 @@ for minute_interval in range(1, 6):
 
                 output = open_file_to_write(error_file_name(output_path))
                 output.write(
-                    'index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
+                    'ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
                 line = ''
                 for column in column_names:
