@@ -70,12 +70,14 @@ for minute_interval in range(1, 6):
                             data_entropy[item], data_baseline[item])
 
                     average_errors[column] = square_error_accumulator / data_len
+
                 output_path = error_folder_name(
                     minute_interval, week_interval, day_to_read)
+
                 if not os.path.isdir(output_path):
                     os.makedirs(output_path)
-
                 output = open_file_to_write(error_file_name(output_path))
+
                 output.write(
                     'ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
