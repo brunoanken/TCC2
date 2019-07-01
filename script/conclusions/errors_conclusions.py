@@ -62,5 +62,7 @@ for day in range(1, 29):
                 columns.append(week)
                 data = read_file(error_file_name(minute, week, day))
                 row.append(data[column][0])
+                # se week in columns: columns.append(week) caso contrário FODA-SE
+                # mas isso dentro do try catch, se n houver no intervalo de semana o dia...
             rows.append(row)
     print(dataframes)
