@@ -7,17 +7,22 @@ from functools import reduce
 column_names = ['ip_origem', 'porta_origem', 'ip_destino',
                 'porta_destino', 'pacotes_ps', 'bytes_ps']
 
-
-def error_file_name(minute, week, day):
-    return f'../../dados_conclusoes/erros/minuto{minute}/intervalo_semana{week}/dia{day}/erro.csv'
-
-
-def table_folder_name():
-    return f'../../dados_conclusoes/tabelas'
+attack_types = {
+    "dos": "dos",
+    "ddos": "ddos"
+}
 
 
-def table_file_name(dimension):
-    return f'{table_folder_name()}/{dimension}.xlsx'
+def error_file_name(attack, minute, week, day):
+    return f'../../dados_conclusoes/{attack}/erros/minuto{minute}/intervalo_semana{week}/dia{day}/erro.csv'
+
+
+def table_folder_name(attack):
+    return f'../../dados_conclusoes/{attack}/tabelas'
+
+
+def table_file_name(table_folder_name, dimension):
+    return f'{table_folder_name}/{dimension}.xlsx'
 
 
 def read_file(file_path):
@@ -29,8 +34,11 @@ def open_file_to_write(file_path):
     return open(file_path, "w")
 
 
-if not os.path.isdir(table_folder_name()):
-    os.makedirs(table_folder_name())
+attack = attack_types["ddos"]
+folder_name = table_folder_name(attack)
+
+if not os.path.isdir(folder_name):
+    os.makedirs(folder_name)
 
 data_frames = []
 index = [1, 2, 3, 4, 5]
@@ -41,9 +49,10 @@ for column in column_names:
         row = []
         for week in range(2, 5):
             errors = []
-            for day in range(1, 29):
+            for day in range(1, 8):
                 try:
-                    data = read_file(error_file_name(minute, week, day))
+                    data = read_file(error_file_name(
+                        attack, minute, week, day))
                     errors.append(data[column][0])
                 except:
                     continue
@@ -53,6 +62,6 @@ for column in column_names:
             row.append(errors_average)
         rows.append(row)
     data_frame = pd.DataFrame(rows, index=index, columns=columns)
-    data_frame.to_excel(table_file_name(column))
+    data_frame.to_excel(table_file_name(table_folder_name(attack), column))
     print(f'\n{column}')
     print(data_frame.min())
