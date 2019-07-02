@@ -54,3 +54,5 @@ for column in column_names:
         rows.append(row)
     data_frame = pd.DataFrame(rows, index=index, columns=columns)
     data_frame.to_excel(table_file_name(column))
+    print(f'\n{column}')
+    print(data_frame.min())
