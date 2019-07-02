@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import subprocess
 from math import pow
+from functools import reduce
 
 column_names = ['ip_origem', 'porta_origem', 'ip_destino',
                 'porta_destino', 'pacotes_ps', 'bytes_ps']
@@ -11,12 +12,12 @@ def error_file_name(minute, week, day):
     return f'../../dados_conclusoes/erros/minuto{minute}/intervalo_semana{week}/dia{day}/erro.csv'
 
 
-def table_folder_name(day, minute, week):
-    return f'../../dados_conclusoes_/tabelas/{day}/minuto{minute}/intervalo_semana{week}'
+def table_folder_name():
+    return f'../../dados_conclusoes/tabelas'
 
 
-def table_file_name(table_folder_name):
-    return f'{table_folder_name}/tabela.csv'
+def table_file_name(dimension):
+    return f'{table_folder_name()}/{dimension}.xlsx'
 
 
 def read_file(file_path):
@@ -28,41 +29,28 @@ def open_file_to_write(file_path):
     return open(file_path, "w")
 
 
-# row1 = ['a', 'b']
-# row2 = ['c', 'd']
-# rows = [row1, row2]
+if not os.path.isdir(table_folder_name()):
+    os.makedirs(table_folder_name())
 
-# index => linhas, eixo Y
-# columns => COLUNAS!!!1 eixo X
-
-# index = ['minuto1', 'minuto2']
-# columns = ['semana2', 'semana3']
-
-# df1 = pd.DataFrame(rows,
-#                    index=index,
-#                    columns=columns)
-# print(df1)
-# df1.to_excel("output.xlsx", sheet_name='cockmar')
-# df2 = df1.copy()
-
-# with pd.ExcelWriter('output.xlsx') as writer:
-#     df1.to_excel(writer, sheet_name='ip_origem')
-#     df2.to_excel(writer, sheet_name="porta_origem")
-
-for day in range(1, 29):
-    dataframes = []
-    for column in column_names:
-        rows = []
-        index = []
-        columns = []
-        for minute in range(1, 6):
-            row = []
-            index.append(minute)
-            for week in range(2, 5):
-                columns.append(week)
-                data = read_file(error_file_name(minute, week, day))
-                row.append(data[column][0])
-                # se week in columns: columns.append(week) caso contrário FODA-SE
-                # mas isso dentro do try catch, se n houver no intervalo de semana o dia...
-            rows.append(row)
-    print(dataframes)
+data_frames = []
+index = [1, 2, 3, 4, 5]
+columns = [2, 3, 4]
+for column in column_names:
+    rows = []
+    for minute in range(1, 6):
+        row = []
+        for week in range(2, 5):
+            errors = []
+            for day in range(1, 29):
+                try:
+                    data = read_file(error_file_name(minute, week, day))
+                    errors.append(data[column][0])
+                except:
+                    continue
+            errors_sum = reduce(
+                lambda value, accumulator: value + accumulator, errors)
+            errors_average = errors_sum / len(errors)
+            row.append(errors_average)
+        rows.append(row)
+    data_frame = pd.DataFrame(rows, index=index, columns=columns)
+    data_frame.to_excel(table_file_name(column))
