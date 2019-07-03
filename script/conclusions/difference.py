@@ -6,6 +6,10 @@ column_names = ['ip_origem', 'porta_origem', 'ip_destino',
                 'porta_destino', 'pacotes_ps', 'bytes_ps']
 
 
+def entropy_attack_file_name(attack, minute, day):
+    return f'../../dados_anomalos/entropy/{attack}/{minute}/{day}.csv'
+
+
 def entropy_file_name(minute, day):
     return f'../../dados_rede/data/entropy/{minute}/{day}.csv'
 
@@ -14,12 +18,8 @@ def baseline_file_name(minute, week, day):
     return f'../../dados_rede/data/baseline/minuto{minute}/intervalo_semana{week}/dia{day}/baseline.csv'
 
 
-def error_folder_name(minute, week, day):
-    return f'../../dados_conclusoes/erros/minuto{minute}/intervalo_semana{week}/dia{day}'
-
-
-def error_file_name(error_folder_name):
-    return f'{error_folder_name}/erro.csv'
+def difference_file_name(day):
+    return f'../../dados_conclusoes/difference/{day}.xlsx'
 
 
 def read_file(file_path):
@@ -39,81 +39,59 @@ def open_file_to_write(file_path):
 def hour_to_minutes(hour, interval):
     return hour * 60 / interval
 
-# def createDictionary(keyColumn, valueColumn):
-#     if(len(keyColumn) == len(valueColumn)):
-#         dictionary = dict(zip(keyColumn, valueColumn))
-#         return dictionary
-#     else:
-#         print('ERRO: listas com tamanhos diferentes')
 
+attacks = ["dos", "ddos"]
 
-# def minuteMapper(dictionary, interval):
-#     firstKey = next(iter(dictionary))
-
-#     globalMinute = int(dictionary[firstKey].split(':')[1])
-
-#     intervalIndexes = [0]
-#     intervalCounter = 0
-
-#     for index in dictionary:
-#         minute = int(dictionary[index].split(':')[1])
-
-#         if(minute != globalMinute):
-#             globalMinute += 1
-#             intervalCounter += 1
-
-#         if(globalMinute == 60):
-#             globalMinute = 0
-
-#         if(intervalCounter == interval):
-#             intervalCounter = 0
-#             intervalIndexes.append(index)
-
-#     return intervalIndexes
-
-
-# def minuteMapToHourMap(minuteMap):
-#     hourMap = []
-#     for i in range(0, len(minuteMap) - 1):
-#         if i % 2 == 0:
-#             hourMap.append(minuteMap[i])
-#     return hourMap
-
-
-# def hourIntervalMap(hourMap, start, finish, lastIndex):
-#     if (finish <= start):
-#         raise Exception(
-#             "valor do horário de fim do intervalo superior ou igual ao valor do horário de início")
-
-#     intervalMap = []
-#     intervalMap.append(hourMap[start])
-
-#     if finish == 24:
-#         intervalMap.append(hourMap[lastIndex])
-#     else:
-#         intervalMap.append(hourMap[finish])
-
-#     return intervalMap
-
-
-weeks = [
-    [1, 2, 3, 4, 5, 6, 7],
-    [8, 9, 10, 11, 12, 13, 14],
-    [15, 16, 17, 18, 19, 20, 21],
-    [22, 23, 24, 25, 26, 27, 28],
-    [29, 30, 31]
-]
-
-# intervalo de minutos
-interval = 1
+######################
+minute_interval = 5  #
+week_inteval = 2     #
+######################
 
 # intervalo de ataque
 # hora de início e hora de término, formato 24h
-start = 8
-stop = 10
+start_hour = 8
+stop_hour = 10
 
-start_minute_interval = hour_to_minutes(start, interval)
-stop_minute_interval = hour_to_minutes(start, interval)
+start = hour_to_minutes(start_hour, minute_interval)
+stop = hour_to_minutes(stop_hour, minute_interval)
 
-baseline = read_baseline_file(baseline_file_name(1, 2, 1))
-print(len(baseline[column_names[0]]))
+start_index = int(start - 1)
+stop_index = int(stop - 1)
+total = stop_index - start_index
+
+difference_folder = '../../dados_conclusoes/difference'
+if not os.path.isdir(difference_folder):
+    os.makedirs(difference_folder)
+
+for day in range(1, 8):
+    rows = []
+
+    for attack in attacks:
+
+        baseline = read_baseline_file(
+            baseline_file_name(minute_interval, week_inteval, day))
+        attack_entropy = read_file(
+            entropy_attack_file_name(attack, minute_interval, day))
+        row = []
+
+        for column in column_names:
+            baseline_sum = 0
+            attack_sum = 0
+
+            for index in range(start_index, stop_index + 1):
+                baseline_sum += baseline[column][index]
+                attack_sum += attack_entropy[column][index]
+
+            baseline_average = baseline_sum / total
+            attack_average = attack_sum / total
+
+            difference = (attack_average - baseline_average) / baseline_average
+            percentage = difference * 100
+            row.append(percentage)
+
+        rows.append(row)
+
+    data_frame = pd.DataFrame(rows, index=attacks, columns=column_names)
+    data_frame.to_excel(difference_file_name(day))
+    print(f'\ndia: {day}')
+    print(data_frame)
