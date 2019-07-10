@@ -4,6 +4,13 @@ Trabalho realizado como requisito parcial para a obtenção do grau de Bacharel 
 
 Todos os arquivos dentro da pasta `script` foram desenvolvidos para atingir os objetivos deste trabalho.
 
+## Requisitos
+Cada arquivo Python deve ser executado pela linha de comando e chamado a partir da raíz do diretório ao qual pertence.
+
+Para o arquivo `data_rw.py` é necessária a instalação da ferramente de linha de comando [nfdump](https://github.com/phaag/nfdump).
+
+Para todos os outros arquivos Python é necessária a instalação da biblioteca [pandas](https://github.com/pandas-dev/pandas).
+
 ## Pasta `script`
 ### `data_rw.py`
 Realiza a leitura dos arquivos no formato `nfcapd` e grava os dados extraídos em formato `csv`.
