@@ -128,7 +128,10 @@ for day in weeks[0]:
 
     interval = 30
 
-    path = f'../../dados_rede/data/csv_data/{day}.csv'
+
+    #path = f'../../dados_rede/data/csv_data/{day}.csv'
+    
+    path = f'C:/Users/jhord/OneDrive/Documentos/tcc/TCC2/script/dados_rede/data/csv_data/{day}.csv'
     print(f'arquivo {day}.csv')
     file = readFile(path)
 

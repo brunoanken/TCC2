@@ -83,8 +83,8 @@ def entroPy(data):
 
 
 for day in range(1, 32):
-    file = f'../dados_rede/data/csv_data/{day}.csv'
-
+    #file = f'../dados_rede/data/csv_data/{day}.csv'
+    file = f"C:/Users/jhord/OneDrive/Documentos/tcc/TCC2/script/dados_rede/data/csv_data/{day}.csv"
     key = readColumn(file, 'index')
     value = readColumn(file, 'horario')
 
@@ -158,7 +158,8 @@ for day in range(1, 32):
                 elif(column == 'bytes'):
                     results_bytes_ps.append(res / (60 * minute))
 
-        output = open(f'../dados_rede/data/entropy/{minute}/{day}.csv', 'w')
+       # output = open(f'../dados_rede/data/entropy/{minute}/{day}.csv', 'w')
+        output = open(f"C:/Users/jhord/OneDrive/Documentos/tcc/TCC2/script/dados_rede/data/entropy/{minute}/{day}.csv", "w")
         output.write(
             'index,ip_origem,porta_origem,ip_destino,porta_destino,pacotes_ps,bytes_ps\n')
 
