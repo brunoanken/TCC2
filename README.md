@@ -4,6 +4,8 @@ Trabalho realizado como requisito parcial para a obtenção do grau de Bacharel 
 
 Todos os arquivos dentro da pasta `script` foram desenvolvidos para atingir os objetivos deste trabalho.
 
+Este trabalho mostra a esquematização e motivações por trás da construção de um sistema de detecção de anomalias em redes de computadores. Para tal foi utilizada a linguagem Python para a criação de todos os códigos de manipulação e criação de dados e a linguagem e plataforma MatLab para a análise destes dados e criação de gráficos.
+
 ## Requisitos
 Cada arquivo Python deve ser executado pela linha de comando e chamado a partir da raíz do diretório ao qual pertence.
 
